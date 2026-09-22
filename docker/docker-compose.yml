@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://travelpal:travelpal@db:5432/travelpal
+    volumes:
+      - ../src:/app/src
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=travelpal
+      - POSTGRES_PASSWORD=travelpal
+      - POSTGRES_DB=travelpal
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Uncomment once you're ready to run MLflow as its own tracked service (Phase 4+)
+  # mlflow:
+  #   image: ghcr.io/mlflow/mlflow:v2.14.1
+  #   command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri /mlruns
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - ../mlruns:/mlruns
+
+volumes:
+  pgdata:
