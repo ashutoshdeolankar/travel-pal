@@ -1,8 +1,14 @@
 """
-Travel Pal — Phase 3: inference.
+Travel Pal — Phase 3/6: inference.
 
 Loads the trained model artifact and scores destinations against a
 user's stated preferences. This is what the API (Phase 5) calls.
+
+As of Phase 6, destination metadata (name, city, rating, etc.) is read
+from Postgres instead of the CSV — but the trained similarity model
+itself still comes from the joblib file produced by `train.py`, which
+was fit on the CSV. Destinations are fetched ordered by destination_id
+so row order lines up with the order the model was trained on.
 
 Quick manual test:
     python -m src.models.predict
@@ -16,15 +22,16 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
+from src.db.connection import engine
+
 MODEL_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "model" / "recommender.joblib"
-DESTINATIONS_FILE = Path(__file__).resolve().parents[2] / "data" / "processed" / "destinations_clean.csv"
 
 _model_cache = None
 _destinations_cache = None
 
 
 def _load_artifacts():
-    """Loads once per process and caches — avoids re-reading disk on every API request."""
+    """Loads once per process and caches — avoids re-reading disk/DB on every API request."""
     global _model_cache, _destinations_cache
     if _model_cache is None:
         if not MODEL_PATH.exists():
@@ -32,7 +39,9 @@ def _load_artifacts():
                 f"{MODEL_PATH} not found. Run `python -m src.models.train` first."
             )
         _model_cache = joblib.load(MODEL_PATH)
-        _destinations_cache = pd.read_csv(DESTINATIONS_FILE)
+        _destinations_cache = pd.read_sql(
+            "SELECT * FROM destinations ORDER BY destination_id", engine
+        )
     return _model_cache, _destinations_cache
 
 
