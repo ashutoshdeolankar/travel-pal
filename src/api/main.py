@@ -13,6 +13,7 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.models.predict import get_recommendations as predict_recommendations
 
@@ -21,7 +22,12 @@ app = FastAPI(
     description="Personalized travel, food, and accommodation recommendations.",
     version="0.2.0",
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class PreferenceRequest(BaseModel):
     budget: str = Field(..., pattern="^(low|mid|high)$", examples=["mid"])

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel Pal — Find Your Next Trip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #e0672a;
+    --primary-dark: #b8481a;
+    --accent: #2e7d6b;
+    --bg: #fbf6ee;
+    --card-bg: #ffffff;
+    --border: #ecdfc9;
+    --text: #2b2320;
+    --muted: #8a7f6e;
+    --shadow: 0 10px 30px -12px rgba(43, 35, 32, 0.18);
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0 0 4rem 0;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e0672a 0%, #c94f1c 45%, #7a3a1d 100%);
+    color: #fff;
+    padding: 3.5rem 1.5rem 5rem 1.5rem;
+    text-align: center;
+  }
+  .hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .hero::before { width: 360px; height: 360px; top: -160px; left: -120px; }
+  .hero::after { width: 260px; height: 260px; bottom: -140px; right: -80px; background: rgba(255,255,255,0.06); }
+  .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+  .hero .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 0.8rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    margin: 0 0 0.6rem 0;
+    line-height: 1.1;
+  }
+  .hero p.subtitle {
+    font-size: 1.05rem;
+    opacity: 0.92;
+    margin: 0;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+  .hero .icon-row {
+    margin-top: 1.4rem;
+    font-size: 1.6rem;
+    letter-spacing: 0.6rem;
+    opacity: 0.9;
+  }
+
+  /* ---------- Layout ---------- */
+  .container { max-width: 760px; margin: -3rem auto 0 auto; padding: 0 1.25rem; position: relative; z-index: 2; }
+
+  form {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1.8rem;
+    display: grid;
+    gap: 1.3rem;
+    box-shadow: var(--shadow);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+
+  label { font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.4rem; color: #4a4038; }
+  select, input[type="number"] {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #fffdf9;
+    transition: border-color 0.15s ease;
+  }
+  select:focus, input:focus { outline: none; border-color: var(--primary); }
+
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.55rem;
+  }
+  .interest-chip {
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    user-select: none;
+    transition: all 0.15s ease;
+    background: #fffdf9;
+  }
+  .interest-chip:hover { border-color: var(--primary); transform: translateY(-1px); }
+  .interest-chip input { display: none; }
+  .interest-chip.selected {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-color: var(--primary-dark);
+    color: white;
+    box-shadow: 0 4px 10px -4px rgba(184, 72, 26, 0.6);
+  }
+
+  button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.95rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 20px -8px rgba(184, 72, 26, 0.7);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 24px -8px rgba(184, 72, 26, 0.8); }
+  button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+  #status { color: var(--muted); margin-top: 1.4rem; font-size: 0.92rem; text-align: center; }
+  #status.error { color: #b3261e; }
+
+  #results { margin-top: 1.5rem; display: grid; gap: 1rem; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    box-shadow: 0 4px 14px -8px rgba(43,35,32,0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg, var(--primary), var(--accent));
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(43,35,32,0.22); }
+  .card h3 { margin: 0 0 0.35rem 0; font-family: 'Playfair Display', serif; font-size: 1.25rem; }
+  .card .meta { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.55rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .card .meta .dot { opacity: 0.5; }
+  .card .tags span {
+    display: inline-block;
+    background: #f4ece0;
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    margin-right: 0.4rem;
+    color: #8a5a2e;
+  }
+  .card .score-badge {
+    position: absolute;
+    top: 1rem; right: 1.2rem;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    opacity: 0.9;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 2rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-content">
+      <div class="eyebrow">Personalized Travel, Powered by ML</div>
+      <h1>Travel Pal</h1>
+      <p class="subtitle">Tell us your budget, trip length, and interests — we'll surface the destinations, from famous landmarks to hidden gems.</p>
+      <div class="icon-row">🏛️ 🛕 🏰 🕌 ⛰️</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <form id="prefsForm">
+      <div class="form-row">
+        <div>
+          <label for="budget">💰 Budget</label>
+          <select id="budget" name="budget">
+            <option value="low">Low</option>
+            <option value="mid" selected>Mid</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div>
+          <label for="duration">🗓️ Trip length (days)</label>
+          <input type="number" id="duration" name="duration" min="1" max="30" value="3">
+        </div>
+      </div>
+
+      <div>
+        <label>✨ Interests (pick a few)</label>
+        <div class="interests-grid" id="interestsGrid"></div>
+      </div>
+
+      <button type="submit" id="submitBtn">Find My Trip</button>
+    </form>
+
+    <div id="status"></div>
+    <div id="results"></div>
+
+    <footer>Travel Pal · MLOps-based recommendation engine</footer>
+  </div>
+
+<script>
+  const API_BASE = "http://127.0.0.1:8000";
+
+  const INTEREST_OPTIONS = [
+    "Temple", "Historical", "Religious", "Fort", "Palace",
+    "Museum", "Natural", "Mosque", "Church", "Beach",
+    "Wildlife Sanctuary", "Monument"
+  ];
+
+  const grid = document.getElementById("interestsGrid");
+  INTEREST_OPTIONS.forEach(tag => {
+    const label = document.createElement("label");
+    label.className = "interest-chip";
+    label.innerHTML = `<input type="checkbox" value="${tag}"> ${tag}`;
+    label.addEventListener("click", () => {
+      setTimeout(() => {
+        const checked = label.querySelector("input").checked;
+        label.classList.toggle("selected", checked);
+      }, 0);
+    });
+    grid.appendChild(label);
+  });
+
+  const form = document.getElementById("prefsForm");
+  const statusEl = document.getElementById("status");
+  const resultsEl = document.getElementById("results");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const budget = document.getElementById("budget").value;
+    const duration = parseInt(document.getElementById("duration").value, 10);
+    const interests = Array.from(
+      grid.querySelectorAll("input[type=checkbox]:checked")
+    ).map(cb => cb.value);
+
+    resultsEl.innerHTML = "";
+    statusEl.className = "";
+    statusEl.textContent = "Finding recommendations...";
+    submitBtn.disabled = true;
+
+    try {
+      const response = await fetch(`${API_BASE}/recommendations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ budget, duration_days: duration, interests, top_n: 10 })
+      });
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        throw new Error(errBody.detail || `Request failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      renderResults(data.recommendations);
+      statusEl.textContent = `${data.recommendations.length} destinations found`;
+    } catch (err) {
+      statusEl.className = "error";
+      statusEl.textContent = `Couldn't fetch recommendations: ${err.message}. Is the API running at ${API_BASE}?`;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  function renderResults(recommendations) {
+    resultsEl.innerHTML = "";
+    if (!recommendations || recommendations.length === 0) {
+      resultsEl.innerHTML = `<div class="empty-state">No matches — try different interests or a higher budget.</div>`;
+      return;
+    }
+    recommendations.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="score-badge">${Math.round(r.score * 100)}% match</div>
+        <h3>${r.name}</h3>
+        <div class="meta">
+          <span>📍 ${r.city}, ${r.state}</span>
+          <span class="dot">·</span>
+          <span>⭐ ${r.avg_rating}</span>
+          <span class="dot">·</span>
+          <span>₹${r.entrance_fee_inr} entry</span>
+          <span class="dot">·</span>
+          <span>~${r.time_needed_hrs}h visit</span>
+        </div>
+        <div class="tags"><span>${r.type}</span><span>${r.significance}</span></div>
+      `;
+      resultsEl.appendChild(card);
+    });
+  }
+</script>
+</body>
+</html>
