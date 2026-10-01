@@ -12,6 +12,7 @@
     --primary: #e0672a;
     --primary-dark: #b8481a;
     --accent: #2e7d6b;
+    --gem: #7b4fbf;
     --bg: #fbf6ee;
     --card-bg: #ffffff;
     --border: #ecdfc9;
@@ -27,8 +28,6 @@
     margin: 0;
     padding: 0 0 4rem 0;
   }
-
-  /* ---------- Hero ---------- */
   .hero {
     position: relative;
     overflow: hidden;
@@ -46,100 +45,48 @@
   .hero::before { width: 360px; height: 360px; top: -160px; left: -120px; }
   .hero::after { width: 260px; height: 260px; bottom: -140px; right: -80px; background: rgba(255,255,255,0.06); }
   .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
-  .hero .eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: 0.75rem;
-    font-weight: 600;
-    opacity: 0.85;
-    margin-bottom: 0.8rem;
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    margin: 0 0 0.6rem 0;
-    line-height: 1.1;
-  }
-  .hero p.subtitle {
-    font-size: 1.05rem;
-    opacity: 0.92;
-    margin: 0;
-    max-width: 480px;
-    margin-inline: auto;
-  }
-  .hero .icon-row {
-    margin-top: 1.4rem;
-    font-size: 1.6rem;
-    letter-spacing: 0.6rem;
-    opacity: 0.9;
-  }
+  .hero .eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.75rem; font-weight: 600; opacity: 0.85; margin-bottom: 0.8rem; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin: 0 0 0.6rem 0; line-height: 1.1; }
+  .hero p.subtitle { font-size: 1.05rem; opacity: 0.92; margin: 0; max-width: 480px; margin-inline: auto; }
+  .hero .icon-row { margin-top: 1.4rem; font-size: 1.6rem; letter-spacing: 0.6rem; opacity: 0.9; }
 
-  /* ---------- Layout ---------- */
   .container { max-width: 760px; margin: -3rem auto 0 auto; padding: 0 1.25rem; position: relative; z-index: 2; }
 
-  form {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 1.8rem;
-    display: grid;
-    gap: 1.3rem;
-    box-shadow: var(--shadow);
-  }
+  form { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 1.8rem; display: grid; gap: 1.3rem; box-shadow: var(--shadow); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
 
   label { font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.4rem; color: #4a4038; }
   select, input[type="number"] {
-    width: 100%;
-    padding: 0.7rem 0.8rem;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    font-size: 1rem;
-    font-family: inherit;
-    background: #fffdf9;
-    transition: border-color 0.15s ease;
+    width: 100%; padding: 0.7rem 0.8rem; border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 1rem; font-family: inherit; background: #fffdf9; transition: border-color 0.15s ease;
   }
   select:focus, input:focus { outline: none; border-color: var(--primary); }
 
-  .interests-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.55rem;
-  }
+  .interests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.55rem; }
   .interest-chip {
-    border: 1.5px solid var(--border);
-    border-radius: 999px;
-    padding: 0.5rem 0.9rem;
-    text-align: center;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    user-select: none;
-    transition: all 0.15s ease;
-    background: #fffdf9;
+    border: 1.5px solid var(--border); border-radius: 999px; padding: 0.5rem 0.9rem; text-align: center;
+    cursor: pointer; font-size: 0.85rem; font-weight: 500; user-select: none; transition: all 0.15s ease; background: #fffdf9;
   }
   .interest-chip:hover { border-color: var(--primary); transform: translateY(-1px); }
   .interest-chip input { display: none; }
   .interest-chip.selected {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-color: var(--primary-dark);
-    color: white;
-    box-shadow: 0 4px 10px -4px rgba(184, 72, 26, 0.6);
+    border-color: var(--primary-dark); color: white; box-shadow: 0 4px 10px -4px rgba(184, 72, 26, 0.6);
   }
+
+  .category-toggle { display: flex; gap: 0.5rem; }
+  .category-option {
+    flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 0.6rem;
+    text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: #fffdf9; transition: all 0.15s ease;
+  }
+  .category-option input { display: none; }
+  .category-option.selected { background: linear-gradient(135deg, var(--gem), #5a3a8c); border-color: #5a3a8c; color: #fff; }
 
   button {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 0.95rem;
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    box-shadow: 0 8px 20px -8px rgba(184, 72, 26, 0.7);
+    color: white; border: none; border-radius: 12px; padding: 0.95rem; font-size: 1rem; font-weight: 700;
+    font-family: inherit; cursor: pointer; letter-spacing: 0.02em; box-shadow: 0 8px 20px -8px rgba(184, 72, 26, 0.7);
     transition: transform 0.12s ease, box-shadow 0.12s ease;
   }
   button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 24px -8px rgba(184, 72, 26, 0.8); }
@@ -150,61 +97,29 @@
 
   #results { margin-top: 1.5rem; display: grid; gap: 1rem; }
   .card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.2rem 1.4rem;
-    box-shadow: 0 4px 14px -8px rgba(43,35,32,0.12);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    position: relative;
-    overflow: hidden;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.4rem;
+    box-shadow: 0 4px 14px -8px rgba(43,35,32,0.12); transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative; overflow: hidden;
   }
-  .card::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 5px;
-    background: linear-gradient(180deg, var(--primary), var(--accent));
-  }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: linear-gradient(180deg, var(--primary), var(--accent)); }
+  .card.hidden-gem::before { background: linear-gradient(180deg, var(--gem), #b491e8); }
   .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(43,35,32,0.22); }
-  .card h3 { margin: 0 0 0.35rem 0; font-family: 'Playfair Display', serif; font-size: 1.25rem; }
+  .card h3 { margin: 0 0 0.35rem 0; font-family: 'Playfair Display', serif; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
   .card .meta { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.55rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
   .card .meta .dot { opacity: 0.5; }
-  .card .tags span {
-    display: inline-block;
-    background: #f4ece0;
-    border-radius: 999px;
-    padding: 0.2rem 0.7rem;
-    font-size: 0.76rem;
-    font-weight: 600;
-    margin-right: 0.4rem;
-    color: #8a5a2e;
+  .card .tags span { display: inline-block; background: #f4ece0; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.76rem; font-weight: 600; margin-right: 0.4rem; color: #8a5a2e; }
+  .card .score-badge { position: absolute; top: 1rem; right: 1.2rem; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 999px; opacity: 0.9; }
+  .gem-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem; background: linear-gradient(135deg, var(--gem), #9b6fd4);
+    color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px;
   }
-  .card .score-badge {
-    position: absolute;
-    top: 1rem; right: 1.2rem;
-    background: var(--accent);
-    color: #fff;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    opacity: 0.9;
+  .known-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem; background: #eef1ee; color: #4a5c50;
+    font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px;
   }
 
-  .empty-state {
-    text-align: center;
-    color: var(--muted);
-    padding: 2rem 1rem;
-    font-size: 0.95rem;
-  }
-
-  footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.8rem;
-    margin-top: 3rem;
-  }
+  .empty-state { text-align: center; color: var(--muted); padding: 2rem 1rem; font-size: 0.95rem; }
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 3rem; }
 </style>
 </head>
 <body>
@@ -232,6 +147,15 @@
         <div>
           <label for="duration">🗓️ Trip length (days)</label>
           <input type="number" id="duration" name="duration" min="1" max="30" value="3">
+        </div>
+      </div>
+
+      <div>
+        <label>🔎 Show me</label>
+        <div class="category-toggle" id="categoryToggle">
+          <label class="category-option selected"><input type="radio" name="category" value="all" checked> All Places</label>
+          <label class="category-option"><input type="radio" name="category" value="hidden_gem"> 💎 Hidden Gems</label>
+          <label class="category-option"><input type="radio" name="category" value="well_known"> 🏙️ Well-Known</label>
         </div>
       </div>
 
@@ -272,6 +196,14 @@
     grid.appendChild(label);
   });
 
+  // category toggle visual state
+  document.querySelectorAll("#categoryToggle .category-option").forEach(opt => {
+    opt.addEventListener("click", () => {
+      document.querySelectorAll("#categoryToggle .category-option").forEach(o => o.classList.remove("selected"));
+      opt.classList.add("selected");
+    });
+  });
+
   const form = document.getElementById("prefsForm");
   const statusEl = document.getElementById("status");
   const resultsEl = document.getElementById("results");
@@ -282,9 +214,8 @@
 
     const budget = document.getElementById("budget").value;
     const duration = parseInt(document.getElementById("duration").value, 10);
-    const interests = Array.from(
-      grid.querySelectorAll("input[type=checkbox]:checked")
-    ).map(cb => cb.value);
+    const interests = Array.from(grid.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value);
+    const category = document.querySelector('input[name="category"]:checked').value;
 
     resultsEl.innerHTML = "";
     statusEl.className = "";
@@ -295,7 +226,7 @@
       const response = await fetch(`${API_BASE}/recommendations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ budget, duration_days: duration, interests, top_n: 10 })
+        body: JSON.stringify({ budget, duration_days: duration, interests, top_n: 10, category })
       });
 
       if (!response.ok) {
@@ -321,11 +252,12 @@
       return;
     }
     recommendations.forEach(r => {
+      const isGem = r.category === "Hidden Gem";
       const card = document.createElement("div");
-      card.className = "card";
+      card.className = "card" + (isGem ? " hidden-gem" : "");
       card.innerHTML = `
         <div class="score-badge">${Math.round(r.score * 100)}% match</div>
-        <h3>${r.name}</h3>
+        <h3>${r.name} ${isGem ? '<span class="gem-badge">💎 Hidden Gem</span>' : '<span class="known-badge">🏙️ Well-Known</span>'}</h3>
         <div class="meta">
           <span>📍 ${r.city}, ${r.state}</span>
           <span class="dot">·</span>

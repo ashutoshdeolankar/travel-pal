@@ -4,11 +4,10 @@ Travel Pal — Phase 3/6: inference.
 Loads the trained model artifact and scores destinations against a
 user's stated preferences. This is what the API (Phase 5) calls.
 
-As of Phase 6, destination metadata (name, city, rating, etc.) is read
-from Postgres instead of the CSV — but the trained similarity model
-itself still comes from the joblib file produced by `train.py`, which
-was fit on the CSV. Destinations are fetched ordered by destination_id
-so row order lines up with the order the model was trained on.
+Destination metadata (name, city, rating, hidden-gem category, etc.)
+is read from Postgres. The trained similarity model itself still comes
+from the joblib file produced by train.py. Destinations are fetched
+ordered by destination_id so row order lines up with training order.
 
 Quick manual test:
     python -m src.models.predict
@@ -31,7 +30,6 @@ _destinations_cache = None
 
 
 def _load_artifacts():
-    """Loads once per process and caches — avoids re-reading disk/DB on every API request."""
     global _model_cache, _destinations_cache
     if _model_cache is None:
         if not MODEL_PATH.exists():
@@ -46,44 +44,25 @@ def _load_artifacts():
 
 
 def _build_user_vector(interests: List[str], model: dict) -> np.ndarray:
-    """
-    Builds a feature vector for the user in the same space as the
-    destination feature matrix: 1.0 for each requested type/significance
-    tag that matches a known category, 0 elsewhere for categoricals.
-    Numeric columns (avg_rating, num_reviews_lakhs) are set to the
-    dataset mean (0 after scaling) — i.e. "no preference", since the
-    user isn't expressing a rating preference, they're expressing topic
-    interests.
-    """
     encoder = model["encoder"]
-    categorical_cols = model["categorical_cols"]
     numeric_cols = model["numeric_cols"]
 
     interests_lower = {tag.lower() for tag in interests}
 
     cat_vector_parts = []
-    for col_idx, categories in enumerate(encoder.categories_):
+    for categories in encoder.categories_:
         col_vector = np.array(
             [1.0 if str(cat).lower() in interests_lower else 0.0 for cat in categories]
         )
         cat_vector_parts.append(col_vector)
     cat_vector = np.concatenate(cat_vector_parts) if cat_vector_parts else np.array([])
 
-    # neutral (mean = 0 after scaling) numeric preference
     num_vector = np.zeros(len(numeric_cols))
 
     return np.concatenate([cat_vector, num_vector]).reshape(1, -1)
 
 
-def _apply_budget_duration_filter(
-    df: pd.DataFrame, budget: str, duration_days: int, budget_thresholds: dict
-) -> pd.DataFrame:
-    """
-    budget: "low" | "mid" | "high"
-    Filters by entrance fee tier and by whether the destination's
-    time-needed fits inside a reasonable per-day sightseeing budget
-    (assumes ~8 active hours/day, leaves room for multiple stops).
-    """
+def _apply_budget_duration_filter(df, budget, duration_days, budget_thresholds):
     df = df.copy()
     low_cutoff = budget_thresholds["low_cutoff"]
     mid_cutoff = budget_thresholds["mid_cutoff"]
@@ -92,7 +71,6 @@ def _apply_budget_duration_filter(
         df = df[df["entrance_fee_inr"] <= low_cutoff]
     elif budget == "mid":
         df = df[df["entrance_fee_inr"] <= mid_cutoff]
-    # "high" — no fee filter, everything is in budget
 
     max_hours = duration_days * 8
     df = df[df["time_needed_hrs"] <= max_hours]
@@ -101,11 +79,15 @@ def _apply_budget_duration_filter(
 
 
 def get_recommendations(
-    budget: str, duration_days: int, interests: List[str], top_n: int = 10
+    budget: str,
+    duration_days: int,
+    interests: List[str],
+    top_n: int = 10,
+    category: str = "all",
 ) -> pd.DataFrame:
     """
-    Main entrypoint. Returns a DataFrame of the top_n recommended
-    destinations with a similarity `score` column, sorted descending.
+    category: "all" | "hidden_gem" | "well_known" — filters results to
+    only Hidden Gem or only Well-Known places, or leaves both in ("all").
     """
     model, destinations = _load_artifacts()
 
@@ -113,8 +95,13 @@ def get_recommendations(
         destinations, budget, duration_days, model["budget_thresholds"]
     )
     if filtered.empty:
-        # fall back to unfiltered rather than returning nothing —
-        # better to show something than an empty result for a demo
+        filtered = destinations.copy()
+
+    if category == "hidden_gem":
+        filtered = filtered[filtered["category"] == "Hidden Gem"]
+    elif category == "well_known":
+        filtered = filtered[filtered["category"] == "Well-Known"]
+    if filtered.empty:
         filtered = destinations.copy()
 
     filtered_positions = filtered.index.to_numpy()
@@ -137,13 +124,14 @@ def get_recommendations(
             "avg_rating",
             "entrance_fee_inr",
             "time_needed_hrs",
+            "category",
+            "hidden_gem_score",
             "score",
         ]
     ]
 
 
 if __name__ == "__main__":
-    # Quick manual sanity check
     results = get_recommendations(
         budget="mid", duration_days=3, interests=["Temple", "Historical"], top_n=5
     )
