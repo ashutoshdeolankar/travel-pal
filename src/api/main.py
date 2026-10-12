@@ -5,7 +5,6 @@ Run locally with:
     uvicorn src.api.main:app --reload
 """
 
-from typing import List
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,7 +29,7 @@ app.add_middleware(
 class PreferenceRequest(BaseModel):
     budget: str = Field(..., pattern="^(low|mid|high)$", examples=["mid"])
     duration_days: int = Field(..., ge=1, examples=[3])
-    interests: List[str] = Field(default_factory=list, examples=[["Temple", "Historical"]])
+    interests: list[str] = Field(default_factory=list, examples=[["Temple", "Historical"]])
     top_n: int = Field(default=10, ge=1, le=50)
     category: str = Field(
         default="all",
@@ -55,7 +54,7 @@ class Recommendation(BaseModel):
 
 
 class RecommendationResponse(BaseModel):
-    recommendations: List[Recommendation]
+    recommendations: list[Recommendation]
 
 
 @app.get("/health")

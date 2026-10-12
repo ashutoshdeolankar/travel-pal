@@ -7,8 +7,47 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-test:
+  # ── Job 1: Lint ──────────────────────────────────────────
+  lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint source code
+        run: ruff check src/ tests/
+
+  # ── Job 2: Test ──────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: travelpal
+          POSTGRES_PASSWORD: travelpal
+          POSTGRES_DB: travelpal
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U travelpal"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://travelpal:travelpal@localhost:5432/travelpal
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,8 +60,28 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Lint
-        run: ruff check src tests
+      - name: Run preprocessing
+        run: python -m src.features.preprocess
+
+      - name: Train model
+        run: python -m src.models.train
+
+      - name: Load data to database
+        run: python -m src.db.load_to_db
 
       - name: Run tests
         run: pytest -v
+
+  # ── Job 3: Docker Build ─────────────────────────────────
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f docker/Dockerfile -t travel-pal-api:ci .
+
+      - name: Verify image was created
+        run: docker images travel-pal-api:ci

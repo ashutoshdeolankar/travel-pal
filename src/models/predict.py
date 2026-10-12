@@ -14,7 +14,6 @@ Quick manual test:
 """
 
 from pathlib import Path
-from typing import List
 
 import joblib
 import numpy as np
@@ -43,7 +42,7 @@ def _load_artifacts():
     return _model_cache, _destinations_cache
 
 
-def _build_user_vector(interests: List[str], model: dict) -> np.ndarray:
+def _build_user_vector(interests: list[str], model: dict) -> np.ndarray:
     encoder = model["encoder"]
     numeric_cols = model["numeric_cols"]
 
@@ -81,7 +80,7 @@ def _apply_budget_duration_filter(df, budget, duration_days, budget_thresholds):
 def get_recommendations(
     budget: str,
     duration_days: int,
-    interests: List[str],
+    interests: list[str],
     top_n: int = 10,
     category: str = "all",
 ) -> pd.DataFrame:
@@ -108,11 +107,18 @@ def get_recommendations(
     filtered_feature_matrix = model["feature_matrix"][filtered_positions]
 
     user_vector = _build_user_vector(interests, model)
-    similarities = cosine_similarity(user_vector, filtered_feature_matrix)[0]
 
-    result = filtered.copy()
-    result["score"] = similarities
-    result = result.sort_values("score", ascending=False).head(top_n)
+    # If the user vector is all zeros (no interests provided), fall back
+    # to ranking by avg_rating instead of cosine similarity.
+    if np.allclose(user_vector, 0):
+        result = filtered.copy()
+        result["score"] = 0.0
+        result = result.sort_values("avg_rating", ascending=False).head(top_n)
+    else:
+        similarities = cosine_similarity(user_vector, filtered_feature_matrix)[0]
+        result = filtered.copy()
+        result["score"] = similarities
+        result = result.sort_values("score", ascending=False).head(top_n)
     return result[
         [
             "destination_id",

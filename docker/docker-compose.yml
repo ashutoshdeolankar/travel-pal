@@ -13,6 +13,7 @@ services:
       - DATABASE_URL=postgresql://travelpal:travelpal@db:5432/travelpal
     volumes:
       - ../src:/app/src
+      - ../data:/app/data
 
   db:
     image: postgres:16
