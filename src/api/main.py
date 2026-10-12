@@ -5,11 +5,15 @@ Run locally with:
     uvicorn src.api.main:app --reload
 """
 
+import hashlib
+import json
 import logging
 import time
+from collections import defaultdict
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from src.models.predict import get_recommendations as predict_recommendations
@@ -25,7 +29,7 @@ logger = logging.getLogger("travelpal")
 app = FastAPI(
     title="Travel Pal API",
     description="Personalized travel, food, and accommodation recommendations.",
-    version="0.4.0",
+    version="0.5.0",
 )
 
 app.add_middleware(
@@ -36,10 +40,67 @@ app.add_middleware(
 )
 
 
-# ── Request logging middleware ─────────────────────────────
+# ── Rate Limiting (in-memory) ──────────────────────────────
+# Max 30 requests per minute per IP address
+RATE_LIMIT = 30
+RATE_WINDOW_SECONDS = 60
+_rate_tracker: dict[str, list[float]] = defaultdict(list)
+
+
+def _is_rate_limited(client_ip: str) -> bool:
+    """Check if a client IP has exceeded the rate limit."""
+    now = time.time()
+    # Remove old timestamps outside the window
+    _rate_tracker[client_ip] = [
+        t for t in _rate_tracker[client_ip]
+        if now - t < RATE_WINDOW_SECONDS
+    ]
+    if len(_rate_tracker[client_ip]) >= RATE_LIMIT:
+        return True
+    _rate_tracker[client_ip].append(now)
+    return False
+
+
+# ── Response Cache (in-memory, 5-minute TTL) ───────────────
+CACHE_TTL_SECONDS = 300  # 5 minutes
+_cache: dict[str, tuple[float, dict]] = {}
+
+
+def _get_cache_key(prefs: dict) -> str:
+    """Create a unique key from request parameters."""
+    stable = json.dumps(prefs, sort_keys=True)
+    return hashlib.md5(stable.encode()).hexdigest()
+
+
+def _get_cached(key: str) -> dict | None:
+    """Return cached response if it exists and hasn't expired."""
+    if key in _cache:
+        timestamp, data = _cache[key]
+        if time.time() - timestamp < CACHE_TTL_SECONDS:
+            return data
+        del _cache[key]
+    return None
+
+
+def _set_cache(key: str, data: dict) -> None:
+    """Store response in cache."""
+    _cache[key] = (time.time(), data)
+
+
+# ── Middleware ─────────────────────────────────────────────
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_and_rate_limit(request: Request, call_next):
     start = time.time()
+
+    # Rate limiting check
+    client_ip = request.client.host if request.client else "unknown"
+    if _is_rate_limited(client_ip):
+        logger.warning("Rate limited: %s", client_ip)
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Too many requests. Max 30 per minute."},
+        )
+
     response = await call_next(request)
     duration_ms = (time.time() - start) * 1000
 
@@ -129,6 +190,14 @@ def get_recommendations(prefs: PreferenceRequest) -> RecommendationResponse:
         "Recommendation request: budget=%s, days=%s, interests=%s, top_n=%s, category=%s",
         prefs.budget, prefs.duration_days, prefs.interests, prefs.top_n, prefs.category,
     )
+
+    # Check cache first
+    cache_key = _get_cache_key(prefs.model_dump())
+    cached = _get_cached(cache_key)
+    if cached is not None:
+        logger.info("Cache HIT — returning cached response")
+        return RecommendationResponse(**cached)
+
     try:
         results_df = predict_recommendations(
             budget=prefs.budget,
@@ -147,9 +216,14 @@ def get_recommendations(prefs: PreferenceRequest) -> RecommendationResponse:
         logger.error("Recommendation failed: %s", e, exc_info=True)
         raise HTTPException(status_code=500, detail=f"Internal error: {e}")
 
-    logger.info("Returning %d recommendations", len(results_df))
+    logger.info("Returning %d recommendations (cache MISS)", len(results_df))
     recommendations = [Recommendation(**row) for row in results_df.to_dict(orient="records")]
-    return RecommendationResponse(recommendations=recommendations)
+    response = RecommendationResponse(recommendations=recommendations)
+
+    # Store in cache
+    _set_cache(cache_key, response.model_dump())
+
+    return response
 
 
 @app.get("/destinations/{destination_id}")
