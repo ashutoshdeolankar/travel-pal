@@ -1,277 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Travel Pal — Find Your Next Trip</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --primary: #e0672a;
-    --primary-dark: #b8481a;
-    --accent: #2e7d6b;
-    --gem: #7b4fbf;
-    --bg: #fbf6ee;
-    --card-bg: #ffffff;
-    --border: #ecdfc9;
-    --text: #2b2320;
-    --muted: #8a7f6e;
-    --shadow: 0 10px 30px -12px rgba(43, 35, 32, 0.18);
-  }
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 0 0 4rem 0;
-  }
-  .hero {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #e0672a 0%, #c94f1c 45%, #7a3a1d 100%);
-    color: #fff;
-    padding: 3.5rem 1.5rem 5rem 1.5rem;
-    text-align: center;
-  }
-  .hero::before, .hero::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.08);
-  }
-  .hero::before { width: 360px; height: 360px; top: -160px; left: -120px; }
-  .hero::after { width: 260px; height: 260px; bottom: -140px; right: -80px; background: rgba(255,255,255,0.06); }
-  .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
-  .hero .eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.75rem; font-weight: 600; opacity: 0.85; margin-bottom: 0.8rem; }
-  .hero h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin: 0 0 0.6rem 0; line-height: 1.1; }
-  .hero p.subtitle { font-size: 1.05rem; opacity: 0.92; margin: 0; max-width: 480px; margin-inline: auto; }
-  .hero .icon-row { margin-top: 1.4rem; font-size: 1.6rem; letter-spacing: 0.6rem; opacity: 0.9; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Pal — Discover India</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .container { max-width: 760px; margin: -3rem auto 0 auto; padding: 0 1.25rem; position: relative; z-index: 2; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
 
-  form { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 1.8rem; display: grid; gap: 1.3rem; box-shadow: var(--shadow); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+        /* ── Header ─────────────────────────────── */
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            color: white;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
 
-  label { font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.4rem; color: #4a4038; }
-  select, input[type="number"] {
-    width: 100%; padding: 0.7rem 0.8rem; border: 1.5px solid var(--border); border-radius: 10px;
-    font-size: 1rem; font-family: inherit; background: #fffdf9; transition: border-color 0.15s ease;
-  }
-  select:focus, input:focus { outline: none; border-color: var(--primary); }
+        /* ── Main container ─────────────────────── */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px 40px;
+        }
 
-  .interests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.55rem; }
-  .interest-chip {
-    border: 1.5px solid var(--border); border-radius: 999px; padding: 0.5rem 0.9rem; text-align: center;
-    cursor: pointer; font-size: 0.85rem; font-weight: 500; user-select: none; transition: all 0.15s ease; background: #fffdf9;
-  }
-  .interest-chip:hover { border-color: var(--primary); transform: translateY(-1px); }
-  .interest-chip input { display: none; }
-  .interest-chip.selected {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    border-color: var(--primary-dark); color: white; box-shadow: 0 4px 10px -4px rgba(184, 72, 26, 0.6);
-  }
+        /* ── Form card ──────────────────────────── */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+        .form-card h2 {
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 1.2rem;
+        }
 
-  .category-toggle { display: flex; gap: 0.5rem; }
-  .category-option {
-    flex: 1; border: 1.5px solid var(--border); border-radius: 10px; padding: 0.6rem;
-    text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: #fffdf9; transition: all 0.15s ease;
-  }
-  .category-option input { display: none; }
-  .category-option.selected { background: linear-gradient(135deg, var(--gem), #5a3a8c); border-color: #5a3a8c; color: #fff; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
 
-  button {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white; border: none; border-radius: 12px; padding: 0.95rem; font-size: 1rem; font-weight: 700;
-    font-family: inherit; cursor: pointer; letter-spacing: 0.02em; box-shadow: 0 8px 20px -8px rgba(184, 72, 26, 0.7);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
-  }
-  button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 24px -8px rgba(184, 72, 26, 0.8); }
-  button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .form-group select,
+        .form-group input {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
 
-  #status { color: var(--muted); margin-top: 1.4rem; font-size: 0.92rem; text-align: center; }
-  #status.error { color: #b3261e; }
+        /* Interests checkboxes */
+        .interests-section {
+            grid-column: 1 / -1;
+        }
+        .interests-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .interest-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .interest-chip:hover {
+            background: #e0e0ff;
+        }
+        .interest-chip input {
+            accent-color: #667eea;
+        }
+        .interest-chip.selected {
+            background: #667eea;
+            color: white;
+        }
 
-  #results { margin-top: 1.5rem; display: grid; gap: 1rem; }
-  .card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.4rem;
-    box-shadow: 0 4px 14px -8px rgba(43,35,32,0.12); transition: transform 0.15s ease, box-shadow 0.15s ease;
-    position: relative; overflow: hidden;
-  }
-  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: linear-gradient(180deg, var(--primary), var(--accent)); }
-  .card.hidden-gem::before { background: linear-gradient(180deg, var(--gem), #b491e8); }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px rgba(43,35,32,0.22); }
-  .card h3 { margin: 0 0 0.35rem 0; font-family: 'Playfair Display', serif; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-  .card .meta { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.55rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-  .card .meta .dot { opacity: 0.5; }
-  .card .tags span { display: inline-block; background: #f4ece0; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.76rem; font-weight: 600; margin-right: 0.4rem; color: #8a5a2e; }
-  .card .score-badge { position: absolute; top: 1rem; right: 1.2rem; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 999px; opacity: 0.9; }
-  .gem-badge {
-    display: inline-flex; align-items: center; gap: 0.25rem; background: linear-gradient(135deg, var(--gem), #9b6fd4);
-    color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px;
-  }
-  .known-badge {
-    display: inline-flex; align-items: center; gap: 0.25rem; background: #eef1ee; color: #4a5c50;
-    font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px;
-  }
+        /* Submit button */
+        .btn-submit {
+            grid-column: 1 / -1;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-  .empty-state { text-align: center; color: var(--muted); padding: 2rem 1rem; font-size: 0.95rem; }
-  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 3rem; }
-</style>
+        /* ── Results section ────────────────────── */
+        .results-section {
+            display: none;
+        }
+        .results-section.visible {
+            display: block;
+        }
+        .results-header {
+            color: white;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+
+        /* Destination cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .dest-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: transform 0.2s;
+        }
+        .dest-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .dest-info h3 {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .dest-meta {
+            font-size: 0.85rem;
+            color: #777;
+            line-height: 1.6;
+        }
+        .dest-meta span {
+            margin-right: 14px;
+        }
+
+        .dest-stats {
+            text-align: right;
+            flex-shrink: 0;
+            margin-left: 20px;
+        }
+        .dest-rating {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .dest-rating small {
+            font-size: 0.7rem;
+            color: #999;
+            font-weight: 400;
+        }
+        .dest-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        .badge-hidden-gem {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-well-known {
+            background: #d4edda;
+            color: #155724;
+        }
+        .dest-score {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* ── Loading & Error ────────────────────── */
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            font-size: 1.1rem;
+        }
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-msg {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 14px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* ── Detail Modal ───────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 16px 16px 0 0;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-body h2 {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        .modal-location {
+            color: #667eea;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+        .modal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .modal-detail-item {
+            background: #f5f5ff;
+            padding: 10px 14px;
+            border-radius: 10px;
+        }
+        .modal-detail-item .label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .modal-detail-item .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .modal-close {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            opacity: 0.9;
+        }
+
+        /* ── Footer ─────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="hero">
-    <div class="hero-content">
-      <div class="eyebrow">Personalized Travel, Powered by ML</div>
-      <h1>Travel Pal</h1>
-      <p class="subtitle">Tell us your budget, trip length, and interests — we'll surface the destinations, from famous landmarks to hidden gems.</p>
-      <div class="icon-row">🏛️ 🛕 🏰 🕌 ⛰️</div>
+<header>
+    <h1>🧳 Travel Pal</h1>
+    <p>Discover amazing destinations across India</p>
+</header>
+
+<div class="container">
+    <!-- Search Form -->
+    <div class="form-card">
+        <h2>Tell us your preferences</h2>
+        <form id="searchForm" class="form-grid">
+
+            <div class="form-group">
+                <label for="budget">💰 Budget</label>
+                <select id="budget">
+                    <option value="low">Low Budget</option>
+                    <option value="mid" selected>Mid Budget</option>
+                    <option value="high">High Budget</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">📅 Duration (days)</label>
+                <input type="number" id="duration" min="1" max="30" value="3">
+            </div>
+
+            <div class="form-group">
+                <label for="category">🏷️ Category</label>
+                <select id="category">
+                    <option value="all">All Destinations</option>
+                    <option value="hidden_gem">Hidden Gems Only</option>
+                    <option value="well_known">Well-Known Only</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="topN">🔢 Number of Results</label>
+                <input type="number" id="topN" min="1" max="50" value="10">
+            </div>
+
+            <div class="form-group interests-section">
+                <label>🎯 Interests (select one or more)</label>
+                <div class="interests-grid" id="interestsGrid">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                🔍 Get Recommendations
+            </button>
+        </form>
     </div>
-  </div>
 
-  <div class="container">
-    <form id="prefsForm">
-      <div class="form-row">
-        <div>
-          <label for="budget">💰 Budget</label>
-          <select id="budget" name="budget">
-            <option value="low">Low</option>
-            <option value="mid" selected>Mid</option>
-            <option value="high">High</option>
-          </select>
+    <!-- Error -->
+    <div class="error-msg" id="errorMsg" style="display:none;"></div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading" style="display:none;">
+        <div class="spinner"></div>
+        <div>Finding the best destinations for you...</div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-section" id="resultsSection">
+        <h2 class="results-header" id="resultsHeader"></h2>
+        <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+</div>
+
+<footer>
+    Travel Pal v0.5.0 — MLOps Travel Recommendation System
+</footer>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <img class="modal-image" id="modalImage" src="" alt="Destination">
+        <div class="modal-body">
+            <h2 id="modalName"></h2>
+            <div class="modal-location" id="modalLocation"></div>
+            <div class="modal-details">
+                <div class="modal-detail-item">
+                    <div class="label">Type</div>
+                    <div class="value" id="modalType"></div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="label">Significance</div>
+                    <div class="value" id="modalSignificance"></div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="label">Rating</div>
+                    <div class="value" id="modalRating"></div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="label">Entrance Fee</div>
+                    <div class="value" id="modalFee"></div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="label">Time Needed</div>
+                    <div class="value" id="modalTime"></div>
+                </div>
+                <div class="modal-detail-item">
+                    <div class="label">Category</div>
+                    <div class="value" id="modalCategory"></div>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕ Close</button>
         </div>
-        <div>
-          <label for="duration">🗓️ Trip length (days)</label>
-          <input type="number" id="duration" name="duration" min="1" max="30" value="3">
-        </div>
-      </div>
-
-      <div>
-        <label>🔎 Show me</label>
-        <div class="category-toggle" id="categoryToggle">
-          <label class="category-option selected"><input type="radio" name="category" value="all" checked> All Places</label>
-          <label class="category-option"><input type="radio" name="category" value="hidden_gem"> 💎 Hidden Gems</label>
-          <label class="category-option"><input type="radio" name="category" value="well_known"> 🏙️ Well-Known</label>
-        </div>
-      </div>
-
-      <div>
-        <label>✨ Interests (pick a few)</label>
-        <div class="interests-grid" id="interestsGrid"></div>
-      </div>
-
-      <button type="submit" id="submitBtn">Find My Trip</button>
-    </form>
-
-    <div id="status"></div>
-    <div id="results"></div>
-
-    <footer>Travel Pal · MLOps-based recommendation engine</footer>
-  </div>
+    </div>
+</div>
 
 <script>
-  const API_BASE = "http://127.0.0.1:8000";
+    const API_URL = "http://localhost:8000";
 
-  const INTEREST_OPTIONS = [
-    "Temple", "Historical", "Religious", "Fort", "Palace",
-    "Museum", "Natural", "Mosque", "Church", "Beach",
-    "Wildlife Sanctuary", "Monument"
-  ];
+    // ── Interest options ──────────────────────────
+    const INTERESTS = [
+        "Temple", "Historical", "Beach", "Fort", "Museum",
+        "Park", "Lake", "Waterfall", "Wildlife", "Mountain",
+        "Palace", "Garden", "Cave", "Market", "Bridge"
+    ];
 
-  const grid = document.getElementById("interestsGrid");
-  INTEREST_OPTIONS.forEach(tag => {
-    const label = document.createElement("label");
-    label.className = "interest-chip";
-    label.innerHTML = `<input type="checkbox" value="${tag}"> ${tag}`;
-    label.addEventListener("click", () => {
-      setTimeout(() => {
-        const checked = label.querySelector("input").checked;
-        label.classList.toggle("selected", checked);
-      }, 0);
+    // Build interest chips
+    const grid = document.getElementById("interestsGrid");
+    INTERESTS.forEach(interest => {
+        const label = document.createElement("label");
+        label.className = "interest-chip";
+        label.innerHTML = `
+            <input type="checkbox" value="${interest}">
+            ${interest}
+        `;
+        label.addEventListener("click", () => {
+            setTimeout(() => {
+                const cb = label.querySelector("input");
+                label.classList.toggle("selected", cb.checked);
+            }, 0);
+        });
+        grid.appendChild(label);
     });
-    grid.appendChild(label);
-  });
 
-  // category toggle visual state
-  document.querySelectorAll("#categoryToggle .category-option").forEach(opt => {
-    opt.addEventListener("click", () => {
-      document.querySelectorAll("#categoryToggle .category-option").forEach(o => o.classList.remove("selected"));
-      opt.classList.add("selected");
+    // ── Form submit ───────────────────────────────
+    document.getElementById("searchForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById("submitBtn");
+        const loading = document.getElementById("loading");
+        const errorMsg = document.getElementById("errorMsg");
+        const resultsSection = document.getElementById("resultsSection");
+
+        // Get selected interests
+        const interests = [];
+        document.querySelectorAll("#interestsGrid input:checked").forEach(cb => {
+            interests.push(cb.value);
+        });
+
+        const payload = {
+            budget: document.getElementById("budget").value,
+            duration_days: parseInt(document.getElementById("duration").value),
+            interests: interests,
+            top_n: parseInt(document.getElementById("topN").value),
+            category: document.getElementById("category").value,
+        };
+
+        // UI state: loading
+        submitBtn.disabled = true;
+        loading.style.display = "block";
+        errorMsg.style.display = "none";
+        resultsSection.classList.remove("visible");
+
+        try {
+            const response = await fetch(`${API_URL}/recommendations`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || `Error ${response.status}`);
+            }
+
+            const data = await response.json();
+            renderResults(data.recommendations, payload);
+
+        } catch (err) {
+            errorMsg.textContent = `❌ ${err.message}`;
+            errorMsg.style.display = "block";
+        } finally {
+            submitBtn.disabled = false;
+            loading.style.display = "none";
+        }
     });
-  });
 
-  const form = document.getElementById("prefsForm");
-  const statusEl = document.getElementById("status");
-  const resultsEl = document.getElementById("results");
-  const submitBtn = document.getElementById("submitBtn");
+    // ── Render results ────────────────────────────
+    function renderResults(recommendations, query) {
+        const section = document.getElementById("resultsSection");
+        const header = document.getElementById("resultsHeader");
+        const grid = document.getElementById("cardsGrid");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+        header.textContent = `📍 ${recommendations.length} destinations found`;
+        grid.innerHTML = "";
 
-    const budget = document.getElementById("budget").value;
-    const duration = parseInt(document.getElementById("duration").value, 10);
-    const interests = Array.from(grid.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value);
-    const category = document.querySelector('input[name="category"]:checked').value;
+        recommendations.forEach((dest, i) => {
+            const badgeClass = dest.category === "Hidden Gem"
+                ? "badge-hidden-gem" : "badge-well-known";
 
-    resultsEl.innerHTML = "";
-    statusEl.className = "";
-    statusEl.textContent = "Finding recommendations...";
-    submitBtn.disabled = true;
+            const card = document.createElement("div");
+            card.className = "dest-card";
+            card.innerHTML = `
+                <div class="dest-info">
+                    <h3>${i + 1}. ${dest.name}</h3>
+                    <div class="dest-meta">
+                        <span>📍 ${dest.city}, ${dest.state}</span><br>
+                        <span>🏛️ ${dest.type}</span>
+                        <span>🌟 ${dest.significance}</span><br>
+                        <span>💰 ₹${dest.entrance_fee_inr}</span>
+                        <span>⏱️ ${dest.time_needed_hrs} hrs</span>
+                    </div>
+                </div>
+                <div class="dest-stats">
+                    <div class="dest-rating">${dest.avg_rating.toFixed(1)} <small>/ 5</small></div>
+                    <div class="dest-badge ${badgeClass}">${dest.category}</div>
+                    ${dest.score > 0 ? `<div class="dest-score">Match: ${(dest.score * 100).toFixed(0)}%</div>` : ""}
+                </div>
+            `;
+            grid.appendChild(card);
+        });
 
-    try {
-      const response = await fetch(`${API_BASE}/recommendations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ budget, duration_days: duration, interests, top_n: 10, category })
-      });
-
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => ({}));
-        throw new Error(errBody.detail || `Request failed (${response.status})`);
-      }
-
-      const data = await response.json();
-      renderResults(data.recommendations);
-      statusEl.textContent = `${data.recommendations.length} destinations found`;
-    } catch (err) {
-      statusEl.className = "error";
-      statusEl.textContent = `Couldn't fetch recommendations: ${err.message}. Is the API running at ${API_BASE}?`;
-    } finally {
-      submitBtn.disabled = false;
+        section.classList.add("visible");
     }
-  });
-
-  function renderResults(recommendations) {
-    resultsEl.innerHTML = "";
-    if (!recommendations || recommendations.length === 0) {
-      resultsEl.innerHTML = `<div class="empty-state">No matches — try different interests or a higher budget.</div>`;
-      return;
-    }
-    recommendations.forEach(r => {
-      const isGem = r.category === "Hidden Gem";
-      const card = document.createElement("div");
-      card.className = "card" + (isGem ? " hidden-gem" : "");
-      card.innerHTML = `
-        <div class="score-badge">${Math.round(r.score * 100)}% match</div>
-        <h3>${r.name} ${isGem ? '<span class="gem-badge">💎 Hidden Gem</span>' : '<span class="known-badge">🏙️ Well-Known</span>'}</h3>
-        <div class="meta">
-          <span>📍 ${r.city}, ${r.state}</span>
-          <span class="dot">·</span>
-          <span>⭐ ${r.avg_rating}</span>
-          <span class="dot">·</span>
-          <span>₹${r.entrance_fee_inr} entry</span>
-          <span class="dot">·</span>
-          <span>~${r.time_needed_hrs}h visit</span>
-        </div>
-        <div class="tags"><span>${r.type}</span><span>${r.significance}</span></div>
-      `;
-      resultsEl.appendChild(card);
-    });
-  }
 </script>
+
 </body>
 </html>
