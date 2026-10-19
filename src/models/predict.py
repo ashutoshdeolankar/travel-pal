@@ -42,22 +42,50 @@ def _load_artifacts():
     return _model_cache, _destinations_cache
 
 
+INTEREST_SYNONYMS = {
+    "temple": ["religious"],
+    "church": ["religious"],
+    "mosque": ["religious"],
+    "pilgrimage": ["religious"],
+    "fort": ["historical"],
+    "palace": ["historical"],
+    "museum": ["historical"],
+    "beach": ["natural"],
+    "mountain": ["natural"],
+    "waterfall": ["natural"],
+    "wildlife": ["natural"],
+    "adventure": ["recreational"],
+}
+
+
+def _expand_interests(interests: list[str]) -> set[str]:
+    terms = set()
+    for tag in interests:
+        t = tag.strip().lower()
+        if not t:
+            continue
+        terms.add(t)
+        terms.update(INTEREST_SYNONYMS.get(t, []))
+    return terms
+
+
 def _build_user_vector(interests: list[str], model: dict) -> np.ndarray:
     encoder = model["encoder"]
     numeric_cols = model["numeric_cols"]
-
-    interests_lower = {tag.lower() for tag in interests}
+    terms = _expand_interests(interests)
 
     cat_vector_parts = []
     for categories in encoder.categories_:
         col_vector = np.array(
-            [1.0 if str(cat).lower() in interests_lower else 0.0 for cat in categories]
+            [
+                1.0 if any(term in str(cat).lower() for term in terms) else 0.0
+                for cat in categories
+            ]
         )
         cat_vector_parts.append(col_vector)
     cat_vector = np.concatenate(cat_vector_parts) if cat_vector_parts else np.array([])
 
     num_vector = np.zeros(len(numeric_cols))
-
     return np.concatenate([cat_vector, num_vector]).reshape(1, -1)
 
 
