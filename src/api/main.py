@@ -166,7 +166,7 @@ def health_detailed() -> dict:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         status["database"] = "ok"
-       except Exception as e:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         status["database"] = f"error: {e}"
         logger.error("Database health check failed: %s", e)
 
@@ -214,7 +214,7 @@ def get_recommendations(prefs: PreferenceRequest) -> RecommendationResponse:
             detail=f"Model not trained yet. Run `python -m src.models.train` first. ({e})",
         )
     except Exception as e:
-           logger.exception("Recommendation failed: %s", e)
+        logger.error("Recommendation failed: %s", e, exc_info=True)  # noqa: G201
         raise HTTPException(status_code=500, detail=f"Internal error: {e}")
 
     logger.info("Returning %d recommendations (cache MISS)", len(results_df))
