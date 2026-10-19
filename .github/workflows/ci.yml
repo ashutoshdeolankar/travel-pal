@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # ── Job 1: Lint ──────────────────────────────────────────
+  # Job 1: Lint
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -25,10 +25,28 @@ jobs:
       - name: Lint source code
         run: ruff check src/ tests/
 
-  # ── Job 2: Test ──────────────────────────────────────────
+  # Job 2: Test, with a temporary database and fake data
   test:
     runs-on: ubuntu-latest
     needs: lint
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: travelpal
+          POSTGRES_PASSWORD: travelpal
+          POSTGRES_DB: travelpal
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U travelpal"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://travelpal:travelpal@localhost:5432/travelpal
 
     steps:
       - uses: actions/checkout@v4
@@ -40,12 +58,23 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install psycopg2-binary
 
-      - name: Run tests
-        run: pytest -v -k "test_health"
+      - name: Make small fake dataset
+        run: python scripts/make_sample_data.py --out data/processed
 
-  # ── Job 3: Docker Build ─────────────────────────────────
+      - name: Train model on fake data
+        run: python -m src.models.train
+
+      - name: Load fake data into Postgres
+        run: python -m src.db.load_to_db
+
+      - name: Run all tests
+        run: pytest -v
+
+  # Job 3: Docker build
   docker-build:
     runs-on: ubuntu-latest
     needs: test
