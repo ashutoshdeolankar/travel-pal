@@ -1,5 +1,5 @@
 """
-Travel Pal — Phase 3/6: inference.
+Travel Pal - Phase 3/6: inference.
 
 Loads the trained model artifact and scores destinations against a
 user's stated preferences. This is what the API (Phase 5) calls.
@@ -27,18 +27,25 @@ MODEL_PATH = Path(__file__).resolve().parents[2] / "data" / "processed" / "model
 _model_cache = None
 _destinations_cache = None
 
+# Entrance-fee caps (INR) for each budget band. About 83% of places charge
+# 20 rupees or less and almost all charge 50 or less, so these caps only
+# remove the few expensive places. "high" has no cap.
+BUDGET_FEE_CAPS = {"low": 20.0, "mid": 50.0}
+
 
 def _load_artifacts():
     global _model_cache, _destinations_cache
-    if _model_cache is None:
+    if _model_cache is None or _destinations_cache is None:
         if not MODEL_PATH.exists():
             raise FileNotFoundError(
                 f"{MODEL_PATH} not found. Run `python -m src.models.train` first."
             )
-        _model_cache = joblib.load(MODEL_PATH)
-        _destinations_cache = pd.read_sql(
+        model = joblib.load(MODEL_PATH)
+        destinations = pd.read_sql(
             "SELECT * FROM destinations ORDER BY destination_id", engine
         )
+        # save both only after BOTH succeeded
+        _model_cache, _destinations_cache = model, destinations
     return _model_cache, _destinations_cache
 
 
@@ -89,15 +96,12 @@ def _build_user_vector(interests: list[str], model: dict) -> np.ndarray:
     return np.concatenate([cat_vector, num_vector]).reshape(1, -1)
 
 
-def _apply_budget_duration_filter(df, budget, duration_days, budget_thresholds):
+def _apply_budget_duration_filter(df, budget, duration_days):
     df = df.copy()
-    low_cutoff = budget_thresholds["low_cutoff"]
-    mid_cutoff = budget_thresholds["mid_cutoff"]
 
-    if budget == "low":
-        df = df[df["entrance_fee_inr"] <= low_cutoff]
-    elif budget == "mid":
-        df = df[df["entrance_fee_inr"] <= mid_cutoff]
+    fee_cap = BUDGET_FEE_CAPS.get(budget)
+    if fee_cap is not None:
+        df = df[df["entrance_fee_inr"] <= fee_cap]
 
     max_hours = duration_days * 8
     df = df[df["time_needed_hrs"] <= max_hours]
@@ -113,14 +117,12 @@ def get_recommendations(
     category: str = "all",
 ) -> pd.DataFrame:
     """
-    category: "all" | "hidden_gem" | "well_known" — filters results to
+    category: "all" | "hidden_gem" | "well_known" - filters results to
     only Hidden Gem or only Well-Known places, or leaves both in ("all").
     """
     model, destinations = _load_artifacts()
 
-    filtered = _apply_budget_duration_filter(
-        destinations, budget, duration_days, model["budget_thresholds"]
-    )
+    filtered = _apply_budget_duration_filter(destinations, budget, duration_days)
     if filtered.empty:
         filtered = destinations.copy()
 
