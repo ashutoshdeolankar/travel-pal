@@ -63,7 +63,7 @@ Requirements: Python 3.11, PostgreSQL 16 (or Docker), Git.
    DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/travelpal
    ```
 
-3. **Get the data.** The datasets and the trained model are not stored in Git. Put the raw files in `data/raw/` as described in `data/README.md`, then run the pipeline from the project root:
+3. **Get the data.** The datasets and the trained model are not stored in Git. Download the two raw CSV files from the [data-v1 release](https://github.com/ashutoshdeolankar/travel-pal/releases/tag/data-v1), put them in `data/raw/` (details in `data/README.md`), then run the pipeline from the project root:
    ```bash
    python -m src.features.preprocess    # clean the raw data
    python -m src.models.train           # train the model, log to MLflow
