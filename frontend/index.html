@@ -1,574 +1,4214 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Pal — Discover India</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TravelPal | AI Travel Planner for India</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Google Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
+        :root {
+
+            --primary: #0d3b36;
+            --primary-light: #17584f;
+
+            --accent: #e58f3f;
+            --accent-light: #f5b56d;
+
+            --dark: #172321;
+            --text: #596663;
+
+            --light: #f7f8f6;
+            --white: #ffffff;
+
+            --border: #e4e9e6;
+
+            --shadow:
+                0 15px 40px rgba(13, 59, 54, 0.08);
+
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+
+            font-family: "Inter", sans-serif;
+
+            color: var(--dark);
+
+            background: var(--white);
+
         }
 
-        /* ── Header ─────────────────────────────── */
-        header {
-            text-align: center;
-            padding: 40px 20px 20px;
-            color: white;
-        }
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-        }
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        a {
+            text-decoration: none;
         }
 
-        /* ── Main container ─────────────────────── */
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 0 20px 40px;
+        button {
+            font-family: inherit;
         }
 
-        /* ── Form card ──────────────────────────── */
-        .form-card {
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+
+            padding: 17px 0;
+
             background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            margin-bottom: 30px;
-        }
-        .form-card h2 {
-            margin-bottom: 20px;
-            color: #555;
-            font-size: 1.2rem;
+
+            box-shadow:
+                0 2px 15px rgba(0,0,0,0.04);
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        @media (max-width: 600px) {
-            .form-grid { grid-template-columns: 1fr; }
+        .brand {
+
+            font-size: 23px;
+
+            font-weight: 800;
+
+            color: var(--primary);
+
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #555;
-            font-size: 0.9rem;
-        }
-        .form-group select,
-        .form-group input {
-            padding: 10px 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
+        .brand i {
+
+            color: var(--accent);
+
+            margin-right: 6px;
+
         }
 
-        /* Interests checkboxes */
-        .interests-section {
-            grid-column: 1 / -1;
+        .brand span {
+
+            color: var(--accent);
+
         }
-        .interests-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 6px;
-        }
-        .interest-chip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: #f0f0f0;
-            border-radius: 20px;
+
+        .nav-link {
+
+            color: var(--text);
+
+            font-weight: 500;
+
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-        .interest-chip:hover {
-            background: #e0e0ff;
-        }
-        .interest-chip input {
-            accent-color: #667eea;
-        }
-        .interest-chip.selected {
-            background: #667eea;
-            color: white;
+
         }
 
-        /* Submit button */
-        .btn-submit {
-            grid-column: 1 / -1;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+        .nav-link:hover {
+
+            color: var(--primary);
+
+        }
+
+
+        /* =====================================================
+           COMMON
+        ===================================================== */
+
+        .section {
+
+            padding: 90px 0;
+
+        }
+
+        /* ABOUT TRAVEL PAL - soft blue and white background */
+
+        #about {
+
+            background: linear-gradient(135deg, #ffffff 0%, #eef6ff 38%, #cce3ff 72%, #ffffff 100%);
+
+        }
+
+
+        .section-title {
+
+            text-align: center;
+
+            margin-bottom: 50px;
+
+        }
+
+        .section-title small {
+
+            color: var(--accent);
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 1.5px;
+
+        }
+
+        .section-title h2 {
+
+            font-size: 40px;
+
+            font-weight: 800;
+
             margin-top: 10px;
-        }
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+
         }
 
-        /* ── Results section ────────────────────── */
-        .results-section {
-            display: none;
-        }
-        .results-section.visible {
-            display: block;
-        }
-        .results-header {
-            color: white;
-            margin-bottom: 16px;
-            font-size: 1.3rem;
+        .section-title p {
+
+            color: var(--text);
+
+            max-width: 650px;
+
+            margin: 12px auto;
+
+            line-height: 1.7;
+
         }
 
-        /* Destination cards */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-        .dest-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .hero {
+
+            position: relative;
+
+            min-height: 82vh;
+
+            padding: 110px 0;
+
+            overflow: hidden;
+
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            transition: transform 0.2s;
-        }
-        .dest-card:hover {
-            transform: translateY(-3px);
-        }
 
-        .dest-info h3 {
-            font-size: 1.15rem;
-            color: #333;
-            margin-bottom: 6px;
-        }
-        .dest-meta {
-            font-size: 0.85rem;
-            color: #777;
-            line-height: 1.6;
-        }
-        .dest-meta span {
-            margin-right: 14px;
-        }
-
-        .dest-stats {
-            text-align: right;
-            flex-shrink: 0;
-            margin-left: 20px;
-        }
-        .dest-rating {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-        .dest-rating small {
-            font-size: 0.7rem;
-            color: #999;
-            font-weight: 400;
-        }
-        .dest-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 6px;
-        }
-        .badge-hidden-gem {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .badge-well-known {
-            background: #d4edda;
-            color: #155724;
-        }
-        .dest-score {
-            font-size: 0.75rem;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        /* ── Loading & Error ────────────────────── */
-        .loading {
-            text-align: center;
-            color: white;
-            padding: 40px;
-            font-size: 1.1rem;
-        }
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 10px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .error-msg {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 14px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        /* ── Detail Modal ───────────────────────── */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 100;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal {
-            background: white;
-            border-radius: 16px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .modal-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 16px 16px 0 0;
-        }
-        .modal-body {
-            padding: 24px;
-        }
-        .modal-body h2 {
-            font-size: 1.4rem;
-            margin-bottom: 4px;
-            color: #333;
-        }
-        .modal-location {
-            color: #667eea;
-            font-size: 0.95rem;
-            margin-bottom: 16px;
-        }
-        .modal-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .modal-detail-item {
-            background: #f5f5ff;
-            padding: 10px 14px;
-            border-radius: 10px;
-        }
-        .modal-detail-item .label {
-            font-size: 0.75rem;
-            color: #888;
-            text-transform: uppercase;
-        }
-        .modal-detail-item .value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-        }
-        .modal-close {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+
             color: white;
+
+        }
+
+        /* Full travel video background */
+        .hero-video {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 0;
+
+            overflow: hidden;
+
+            background: #163b35;
+
+        }
+
+        .hero-video video {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            object-position: center;
+
+        }
+
+        /* The source clip is vertical, so keep its main travel scene centered. */
+        @media (max-width: 768px) {
+            .hero-video video {
+                object-position: center center;
+            }
+        }
+
+        /* Dark overlay keeps text readable */
+        .hero-video::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background: linear-gradient(
+                90deg,
+                rgba(5, 31, 27, .55) 0%,
+                rgba(5, 31, 27, .30) 48%,
+                rgba(5, 31, 27, .18) 100%
+            );
+
+        }
+
+        .hero > .container {
+
+            position: relative;
+
+            z-index: 2;
+
+        }
+
+        .hero-badge {
+
+            display: inline-block;
+
+            background: rgba(255,255,255,.18);
+
+            color: white;
+
+            border: 1px solid rgba(255,255,255,.25);
+
+            backdrop-filter: blur(8px);
+
+            padding: 8px 14px;
+
+            border-radius: 50px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 20px;
+
+        }
+
+        .hero h1 {
+
+            font-size: clamp(42px, 6vw, 70px);
+
+            line-height: 1.05;
+
+            font-weight: 800;
+
+            letter-spacing: -2px;
+
+        }
+
+        .hero h1 span {
+
+            color: var(--accent-light);
+
+        }
+
+        .hero p {
+
+            color: rgba(255,255,255,.90);
+
+            line-height: 1.8;
+
+            font-size: 17px;
+
+            max-width: 580px;
+
+            margin: 25px 0;
+
+        }
+
+        .hero-buttons {
+
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+        }
+
+        .btn-main {
+
+            background: var(--primary);
+
+            color: white;
+
             border: none;
+
+            padding: 13px 23px;
+
             border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .modal-close:hover {
-            opacity: 0.9;
+
+            font-weight: 700;
+
         }
 
-        /* ── Footer ─────────────────────────────── */
-        footer {
+        .btn-main:hover {
+
+            background: var(--primary-light);
+
+            color: white;
+
+        }
+
+        .btn-secondary {
+
+            background: white;
+
+            color: var(--primary);
+
+            border: 1px solid var(--border);
+
+            padding: 13px 23px;
+
+            border-radius: 10px;
+
+            font-weight: 700;
+
+        }
+
+        .btn-secondary:hover {
+
+            border-color: var(--primary);
+
+        }
+
+        .hero-points {
+
+            display: flex;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+
+            margin-top: 25px;
+
+            font-size: 13px;
+
+            color: rgba(255,255,255,.88);
+
+        }
+
+        .hero-points i {
+
+            color: var(--accent-light);
+
+        }
+
+
+        /* =====================================================
+           HERO DASHBOARD
+        ===================================================== */
+
+        .hero-visual {
+
+            position: relative;
+
+            min-height: 450px;
+
+        }
+
+        .india-card {
+
+            height: 400px;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(13,59,54,.62),
+                    rgba(38,91,82,.38)
+                );
+
+            border: 1px solid rgba(255,255,255,.25);
+
+            backdrop-filter: blur(5px);
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: white;
+
+            box-shadow: 0 20px 50px rgba(0,0,0,.22);
+
+        }
+
+        .india-card i {
+
+            font-size: 80px;
+
+        }
+
+        .india-card h4 {
+
+            margin-top: 15px;
+
+            font-weight: 800;
+
+        }
+
+        .floating {
+
+            position: absolute;
+
+            background: rgba(255,255,255,.94);
+
+            padding: 15px 18px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 15px 35px rgba(0,0,0,0.25);
+
+            backdrop-filter: blur(8px);
+
+        }
+
+        .match {
+
+            top: 50px;
+
+            left: -25px;
+
+        }
+
+        .score {
+
+            bottom: 30px;
+
+            right: -20px;
+
+        }
+
+        .floating small {
+
+            color: var(--text);
+
+            display: block;
+
+            font-size: 11px;
+
+        }
+
+        .floating strong {
+
+            color: var(--primary);
+
+            font-size: 20px;
+
+        }
+
+
+        /* =====================================================
+           FEATURES
+        ===================================================== */
+
+        .feature-card {
+
+            height: 100%;
+
+            padding: 30px;
+
+            border: 2px solid #9fc5f8;
+
+            border-radius: 18px;
+
+            background: rgba(255, 255, 255, 0.88);
+
+            transition: .3s;
+
+        }
+
+        .feature-card:hover {
+
+            transform: translateY(-6px);
+
+            box-shadow: var(--shadow);
+
+        }
+
+        .feature-icon {
+
+            width: 55px;
+
+            height: 55px;
+
+            background: #edf4f2;
+
+            color: var(--primary);
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            border-radius: 14px;
+
+            font-size: 23px;
+
+            margin-bottom: 20px;
+
+        }
+
+        .feature-card h4 {
+
+            font-weight: 700;
+
+        }
+
+        .feature-card p {
+
+            color: var(--text);
+
+            line-height: 1.7;
+
+            font-size: 14px;
+
+        }
+
+
+        /* =====================================================
+           EXPLORER
+        ===================================================== */
+
+        .explorer {
+
+            background: var(--light);
+
+        }
+
+        .search-box {
+
+            max-width: 700px;
+
+            margin: 0 auto 40px;
+
+            position: relative;
+
+        }
+
+        .search-box input {
+
+            width: 100%;
+
+            padding: 17px 50px 17px 20px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            outline: none;
+
+            font-size: 15px;
+
+        }
+
+        .search-box i {
+
+            position: absolute;
+
+            right: 18px;
+
+            top: 17px;
+
+            color: var(--text);
+
+        }
+
+        .state-card {
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            height: 100%;
+
+            transition: .3s;
+
+        }
+
+        .state-card:hover {
+
+            transform: translateY(-6px);
+
+            box-shadow: var(--shadow);
+
+        }
+
+        .state-top {
+
+            height: 150px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            color: white;
+
+            font-size: 28px;
+
+            font-weight: 800;
+
+            position: relative;
+
+        }
+
+        .state-top::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background: rgba(0,0,0,.12);
+
+        }
+
+        .state-top span {
+
+            position: relative;
+
+            z-index: 2;
+
             text-align: center;
-            padding: 20px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.85rem;
+
         }
-    </style>
-</head>
-<body>
 
-<header>
-    <h1>🧳 Travel Pal</h1>
-    <p>Discover amazing destinations across India</p>
-</header>
+        .state-body {
 
-<div class="container">
-    <!-- Search Form -->
-    <div class="form-card">
-        <h2>Tell us your preferences</h2>
-        <form id="searchForm" class="form-grid">
+            padding: 20px;
 
-            <div class="form-group">
-                <label for="budget">💰 Budget</label>
-                <select id="budget">
-                    <option value="low">Low Budget</option>
-                    <option value="mid" selected>Mid Budget</option>
-                    <option value="high">High Budget</option>
-                </select>
-            </div>
+        }
 
-            <div class="form-group">
-                <label for="duration">📅 Duration (days)</label>
-                <input type="number" id="duration" min="1" max="30" value="3">
-            </div>
+        .state-body h5 {
 
-            <div class="form-group">
-                <label for="category">🏷️ Category</label>
-                <select id="category">
-                    <option value="all">All Destinations</option>
-                    <option value="hidden_gem">Hidden Gems Only</option>
-                    <option value="well_known">Well-Known Only</option>
-                </select>
-            </div>
+            font-weight: 700;
 
-            <div class="form-group">
-                <label for="topN">🔢 Number of Results</label>
-                <input type="number" id="topN" min="1" max="50" value="10">
-            </div>
+        }
 
-            <div class="form-group interests-section">
-                <label>🎯 Interests (select one or more)</label>
-                <div class="interests-grid" id="interestsGrid">
-                    <!-- Filled by JavaScript -->
-                </div>
-            </div>
+        .state-body p {
 
-            <button type="submit" class="btn-submit" id="submitBtn">
-                🔍 Get Recommendations
-            </button>
-        </form>
-    </div>
+            color: var(--text);
 
-    <!-- Error -->
-    <div class="error-msg" id="errorMsg" style="display:none;"></div>
+            font-size: 13px;
 
-    <!-- Loading -->
-    <div class="loading" id="loading" style="display:none;">
-        <div class="spinner"></div>
-        <div>Finding the best destinations for you...</div>
-    </div>
+            line-height: 1.6;
 
-    <!-- Results -->
-    <div class="results-section" id="resultsSection">
-        <h2 class="results-header" id="resultsHeader"></h2>
-        <div class="cards-grid" id="cardsGrid"></div>
-    </div>
-</div>
+        }
 
-<footer>
-    Travel Pal v0.5.0 — MLOps Travel Recommendation System
-</footer>
+        .state-body button {
 
-<!-- Detail Modal -->
-<div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-        <img class="modal-image" id="modalImage" src="" alt="Destination">
-        <div class="modal-body">
-            <h2 id="modalName"></h2>
-            <div class="modal-location" id="modalLocation"></div>
-            <div class="modal-details">
-                <div class="modal-detail-item">
-                    <div class="label">Type</div>
-                    <div class="value" id="modalType"></div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="label">Significance</div>
-                    <div class="value" id="modalSignificance"></div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="label">Rating</div>
-                    <div class="value" id="modalRating"></div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="label">Entrance Fee</div>
-                    <div class="value" id="modalFee"></div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="label">Time Needed</div>
-                    <div class="value" id="modalTime"></div>
-                </div>
-                <div class="modal-detail-item">
-                    <div class="label">Category</div>
-                    <div class="value" id="modalCategory"></div>
-                </div>
-            </div>
-            <button class="modal-close" onclick="closeModal()">✕ Close</button>
-        </div>
-    </div>
-</div>
+            border: none;
 
-<script>
-    const API_URL = "http://localhost:8000";
+            background: none;
 
-    // ── Interest options ──────────────────────────
-    const INTERESTS = [
-        "Temple", "Historical", "Beach", "Fort", "Museum",
-        "Park", "Lake", "Waterfall", "Wildlife", "Mountain",
-        "Palace", "Garden", "Cave", "Market", "Bridge"
-    ];
+            color: var(--primary);
 
-    // Build interest chips
-    const grid = document.getElementById("interestsGrid");
-    INTERESTS.forEach(interest => {
-        const label = document.createElement("label");
-        label.className = "interest-chip";
-        label.innerHTML = `
-            <input type="checkbox" value="${interest}">
-            ${interest}
-        `;
-        label.addEventListener("click", () => {
-            setTimeout(() => {
-                const cb = label.querySelector("input");
-                label.classList.toggle("selected", cb.checked);
-            }, 0);
-        });
-        grid.appendChild(label);
-    });
+            font-weight: 700;
 
-    // ── Form submit ───────────────────────────────
-    document.getElementById("searchForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
+            padding: 0;
 
-        const submitBtn = document.getElementById("submitBtn");
-        const loading = document.getElementById("loading");
-        const errorMsg = document.getElementById("errorMsg");
-        const resultsSection = document.getElementById("resultsSection");
+        }
 
-        // Get selected interests
-        const interests = [];
-        document.querySelectorAll("#interestsGrid input:checked").forEach(cb => {
-            interests.push(cb.value);
-        });
 
-        const payload = {
-            budget: document.getElementById("budget").value,
-            duration_days: parseInt(document.getElementById("duration").value),
-            interests: interests,
-            top_n: parseInt(document.getElementById("topN").value),
-            category: document.getElementById("category").value,
-        };
+        /* Different state colors */
 
-        // UI state: loading
-        submitBtn.disabled = true;
-        loading.style.display = "block";
-        errorMsg.style.display = "none";
-        resultsSection.classList.remove("visible");
+        .c1 { background: linear-gradient(135deg,#5b8176,#244b43); }
+        .c2 { background: linear-gradient(135deg,#71aaa2,#21655f); }
+        .c3 { background: linear-gradient(135deg,#d69b64,#874925); }
+        .c4 { background: linear-gradient(135deg,#7fae8f,#286044); }
+        .c5 { background: linear-gradient(135deg,#8da8c2,#405b79); }
+        .c6 { background: linear-gradient(135deg,#a8a2ca,#575077); }
+        .c7 { background: linear-gradient(135deg,#c88c63,#743d28); }
+        .c8 { background: linear-gradient(135deg,#7ea49e,#315f58); }
+        .c9 { background: linear-gradient(135deg,#a5bf86,#4e733b); }
+        .c10 { background: linear-gradient(135deg,#d5a873,#865b32); }
 
-        try {
-            const response = await fetch(`${API_URL}/recommendations`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
 
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.detail || `Error ${response.status}`);
+        /* =====================================================
+           PLANNER
+        ===================================================== */
+
+        .planner {
+
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+
+        }
+
+        .planner::before {
+
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.42);
+            z-index: 0;
+            pointer-events: none;
+
+        }
+
+        .planner-background-video {
+
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            pointer-events: none;
+
+        }
+
+        .planner > .container {
+
+            position: relative;
+            z-index: 1;
+
+        }
+
+        .planner .section-title,
+        .planner .section-title h2,
+        .planner .section-title p,
+        .planner .section-title small {
+            color: white;
+        }
+
+        .planner-box {
+
+            max-width: 900px;
+
+            margin: auto;
+
+            border: 1px solid var(--border);
+
+            border-radius: 22px;
+
+            padding: 35px;
+
+            box-shadow: var(--shadow);
+
+        }
+
+        .form-label {
+
+            font-weight: 600;
+
+            font-size: 14px;
+
+        }
+
+        .form-control,
+        .form-select {
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            border-color: var(--border);
+
+        }
+
+        .interest-buttons {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+        }
+
+        .interest {
+
+            border: 1px solid var(--border);
+
+            background: white;
+
+            border-radius: 50px;
+
+            padding: 8px 14px;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+        }
+
+        .interest.active {
+
+            background: var(--primary);
+
+            color: white;
+
+            border-color: var(--primary);
+
+        }
+
+
+        /* =====================================================
+           RESULTS
+        ===================================================== */
+
+        #resultsSection {
+
+            display: none;
+
+            background: var(--light);
+
+        }
+
+        .result-card {
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            height: 100%;
+
+            box-shadow: 0 8px 25px rgba(0,0,0,.04);
+
+        }
+
+        .match-score {
+
+            width: 60px;
+
+            height: 60px;
+
+            border-radius: 50%;
+
+            background: var(--primary);
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-weight: 800;
+
+            font-size: 14px;
+
+        }
+
+        .tag {
+
+            display: inline-block;
+
+            background: #edf4f2;
+
+            color: var(--primary);
+
+            padding: 5px 9px;
+
+            border-radius: 50px;
+
+            font-size: 11px;
+
+            margin: 3px;
+
+        }
+
+
+        /* =====================================================
+           REALITY
+        ===================================================== */
+
+        .reality-box {
+
+            background: var(--primary);
+
+            color: white;
+
+            border-radius: 22px;
+
+            padding: 45px;
+
+        }
+
+        .reality-score {
+
+            font-size: 70px;
+
+            font-weight: 800;
+
+        }
+
+        .reality-score span {
+
+            font-size: 20px;
+
+            opacity: .6;
+
+        }
+
+        .metric {
+
+            margin: 20px 0;
+
+        }
+
+        .metric-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+
+        }
+
+        .metric-bar {
+
+            height: 8px;
+
+            background: rgba(255,255,255,.15);
+
+            border-radius: 10px;
+
+        }
+
+        .metric-fill {
+
+            height: 100%;
+
+            background: var(--accent-light);
+
+            border-radius: 10px;
+
+        }
+
+
+        /* =====================================================
+           ITINERARY
+        ===================================================== */
+
+        .itinerary-card {
+
+            border: 1px solid var(--border);
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            background: white;
+
+            margin-bottom: 15px;
+
+        }
+
+        .day-number {
+
+            width: 45px;
+
+            height: 45px;
+
+            border-radius: 12px;
+
+            background: var(--primary);
+
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-weight: 800;
+
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            background: #102d29;
+
+            color: white;
+
+            padding: 65px 0 25px;
+
+        }
+
+        footer p {
+
+            color: #a9bbb7;
+
+            line-height: 1.7;
+
+        }
+
+        footer a {
+
+            display: block;
+
+            color: #a9bbb7;
+
+            margin-bottom: 9px;
+
+            font-size: 13px;
+
+        }
+
+        footer a:hover {
+
+            color: white;
+
+        }
+
+        .footer-bottom {
+
+            border-top: 1px solid rgba(255,255,255,.1);
+
+            padding-top: 20px;
+
+            margin-top: 35px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            font-size: 12px;
+
+            color: #90a39f;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media(max-width:768px) {
+
+            .hero {
+
+                min-height: 90vh;
+
+                padding: 70px 0;
+
             }
 
-            const data = await response.json();
-            renderResults(data.recommendations, payload);
+            .hero-video video {
 
-        } catch (err) {
-            errorMsg.textContent = `❌ ${err.message}`;
-            errorMsg.style.display = "block";
-        } finally {
-            submitBtn.disabled = false;
-            loading.style.display = "none";
+                object-position: center;
+
+            }
+
+            .hero h1 {
+
+                font-size: 45px;
+
+            }
+
+            .hero-visual {
+
+                margin-top: 45px;
+
+            }
+
+            .match {
+
+                left: 5px;
+
+            }
+
+            .score {
+
+                right: 5px;
+
+            }
+
+            .section {
+
+                padding: 70px 0;
+
+            }
+
+            .section-title h2 {
+
+                font-size: 32px;
+
+            }
+
+            .planner-box {
+
+                padding: 20px;
+
+            }
+
+            .reality-box {
+
+                padding: 25px;
+
+            }
+
+            .footer-bottom {
+
+                flex-direction: column;
+
+                gap: 8px;
+
+            }
+
         }
+
+    
+/* Bold white labels in the Plan My Trip block */
+.planner .form-label {
+    font-weight: 700 !important;
+    color: white !important;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container">
+
+        <a
+            class="navbar-brand brand"
+            href="#home"
+        >
+
+            <i class="bi bi-compass"></i>
+
+            Travel<span>Pal</span>
+
+        </a>
+
+
+        <button
+            class="navbar-toggler"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar"
+        >
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbar"
+        >
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="#home"
+                    >
+                        Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="#explore"
+                    >
+                        Explore India
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="#planner"
+                    >
+                        Plan My Trip
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="#resultsSection"
+                    >
+                        AI Results
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="#about"
+                    >
+                        About
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section
+    class="hero"
+    id="home"
+>
+
+    <!-- Background travel video -->
+    <div class="hero-video" aria-hidden="true">
+        <video autoplay muted loop playsinline preload="auto"
+               poster="travel-background-poster.jpg">
+            <source
+                src="assets/asset-01-086e2b60.mp4"
+                type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+
+                <div class="hero-badge">
+
+                    <i class="bi bi-stars"></i>
+
+                    AI-POWERED TRAVEL PLANNING
+
+                </div>
+
+
+                <h1>
+
+                    Plan Smarter.
+                    <br>
+
+                    <span>Travel Better.</span>
+
+                </h1>
+
+
+                <p>
+
+                    TravelPal creates personalized travel
+                    plans based on your budget, interests,
+                    food preferences, travel style and available
+                    time.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <button
+                        class="btn-main"
+                        onclick="scrollToPlanner()"
+                    >
+
+                        <i class="bi bi-magic"></i>
+
+                        Plan My Trip
+
+                    </button>
+
+
+                    <button
+                        class="btn-secondary"
+                        onclick="scrollToExplore()"
+                    >
+
+                        Explore India
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="hero-points">
+
+                    <span>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Personalized
+                    </span>
+
+                    <span>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Budget-aware
+                    </span>
+
+                    <span>
+                        <i class="bi bi-check-circle-fill"></i>
+                        AI-powered
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-6">
+
+                <div class="hero-visual">
+
+                    <div class="india-card">
+
+                        <i class="bi bi-geo-alt"></i>
+
+                        <h4>Explore India</h4>
+
+                        <small>
+                            28 States + 8 UTs
+                        </small>
+
+                    </div>
+
+
+                    <div class="floating match">
+
+                        <small>AI Destination Match</small>
+
+                        <strong>94%</strong>
+
+                    </div>
+
+
+                    <div class="floating score">
+
+                        <small>Trip Reality Score</small>
+
+                        <strong>86 / 100</strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section class="section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <small>HOW IT WORKS</small>
+
+            <h2>
+                Your trip, intelligently planned.
+            </h2>
+
+            <p>
+                TravelPal considers multiple factors
+                before creating your travel plan.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
+
+                    <h4>Tell Us</h4>
+
+                    <p>
+                        Enter your starting city, budget,
+                        duration, interests and travel
+                        preferences.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-stars"></i>
+                    </div>
+
+                    <h4>AI Recommends</h4>
+
+                    <p>
+                        The recommendation engine finds
+                        destinations matching your preferences.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <h4>Reality Check</h4>
+
+                    <p>
+                        Check budget, time, distance and
+                        preference compatibility.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-sliders"></i>
+                    </div>
+
+                    <h4>Optimize</h4>
+
+                    <p>
+                        Adjust the trip for lower cost,
+                        less travel or more activities.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     EXPLORE INDIA
+===================================================== -->
+
+<section
+    class="section explorer"
+    id="explore"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <small>EXPLORE INDIA</small>
+
+            <h2>
+                Discover India
+            </h2>
+
+            <p>
+                Search across states, union territories,
+                destinations and tourist places.
+            </p>
+
+        </div>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search state, city or destination..."
+                onkeyup="searchStates()"
+            >
+
+            <i class="bi bi-search"></i>
+
+        </div>
+
+
+        <div
+            class="row g-4"
+            id="stateContainer"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PLAN MY TRIP
+===================================================== -->
+
+<section
+    class="section planner"
+    id="planner"
+>
+
+    <video
+        class="planner-background-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+    >
+        <source
+            src="assets/asset-02-66f03ecf.mp4"
+            type="video/mp4"
+        >
+    </video>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <small>AI TRIP PLANNER</small>
+
+            <h2>
+                Tell us about your trip.
+            </h2>
+
+            <p>
+                Our current frontend recommendation engine
+                uses your inputs to generate a demonstration
+                personalized travel plan.
+            </p>
+
+        </div>
+
+
+        <div class="planner-box">
+
+            <div class="row g-4">
+
+
+                <!-- STARTING CITY -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Starting City
+                    </label>
+
+                    <input
+                        type="text"
+                        id="startCity"
+                        class="form-control"
+                        placeholder="Example: Pune"
+                    >
+
+                </div>
+
+
+                <!-- BUDGET -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Budget per person (₹)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="budget"
+                        class="form-control"
+                        placeholder="Example: 15000"
+                    >
+
+                </div>
+
+
+                <!-- DURATION -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Trip Duration
+                    </label>
+
+                    <select
+                        id="duration"
+                        class="form-select"
+                    >
+
+                        <option value="2">
+                            2 Days
+                        </option>
+
+                        <option value="3">
+                            3 Days
+                        </option>
+
+                        <option value="4">
+                            4 Days
+                        </option>
+
+                        <option value="5" selected>
+                            5 Days
+                        </option>
+
+                        <option value="7">
+                            7 Days
+                        </option>
+
+                        <option value="10">
+                            10 Days
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- TRAVELLERS -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Travellers
+                    </label>
+
+                    <input
+                        type="number"
+                        id="travellers"
+                        class="form-control"
+                        value="1"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Travel Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="travelDate"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- FOOD -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Food Preference
+                    </label>
+
+                    <select
+                        id="food"
+                        class="form-select"
+                    >
+
+                        <option>
+                            No Preference
+                        </option>
+
+                        <option>
+                            Vegetarian
+                        </option>
+
+                        <option>
+                            Non-Vegetarian
+                        </option>
+
+                        <option>
+                            Vegan
+                        </option>
+
+                        <option>
+                            Jain
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- INTERESTS -->
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Your Interests
+                    </label>
+
+                    <div class="interest-buttons">
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            History
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Nature
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Beaches
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Adventure
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Food
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Culture
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Spiritual
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Wildlife
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Photography
+                        </button>
+
+                        <button
+                            type="button"
+                            class="interest"
+                            onclick="toggleInterest(this)"
+                        >
+                            Relaxation
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TRAVEL STYLE -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Travel Style
+                    </label>
+
+                    <select
+                        id="travelStyle"
+                        class="form-select"
+                    >
+
+                        <option>
+                            Budget Explorer
+                        </option>
+
+                        <option>
+                            Peaceful
+                        </option>
+
+                        <option>
+                            Food Explorer
+                        </option>
+
+                        <option>
+                            Adventure
+                        </option>
+
+                        <option>
+                            Photography
+                        </option>
+
+                        <option>
+                            Family
+                        </option>
+
+                        <option>
+                            Culture Lover
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- GENERATE -->
+
+                <div class="col-12 text-center">
+
+                    <button
+                        class="btn-main"
+                        onclick="generateTrip()"
+                    >
+
+                        <i class="bi bi-stars"></i>
+
+                        Generate My Trip
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     RESULTS
+===================================================== -->
+
+<section
+    class="section"
+    id="resultsSection"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <small>AI RECOMMENDATIONS</small>
+
+            <h2>
+                Recommended destinations
+            </h2>
+
+            <p id="resultDescription">
+                Based on your preferences.
+            </p>
+
+        </div>
+
+
+        <div
+            class="row g-4"
+            id="recommendationContainer"
+        ></div>
+
+
+        <!-- REALITY CHECK -->
+
+        <div class="mt-5">
+
+            <div class="reality-box">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-4 text-center">
+
+                        <small>
+                            TRIP REALITY SCORE
+                        </small>
+
+                        <div
+                            class="reality-score"
+                            id="realityScore"
+                        >
+                            86
+                            <span>/100</span>
+                        </div>
+
+                        <p>
+                            Demonstration score based on
+                            your current inputs.
+                        </p>
+
+                    </div>
+
+
+                    <div class="col-lg-8">
+
+                        <div class="metric">
+
+                            <div class="metric-header">
+                                <span>Budget Feasibility</span>
+                                <span id="budgetMetric">88%</span>
+                            </div>
+
+                            <div class="metric-bar">
+
+                                <div
+                                    class="metric-fill"
+                                    id="budgetBar"
+                                    style="width:88%"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <div class="metric-header">
+                                <span>Time Feasibility</span>
+                                <span id="timeMetric">84%</span>
+                            </div>
+
+                            <div class="metric-bar">
+
+                                <div
+                                    class="metric-fill"
+                                    id="timeBar"
+                                    style="width:84%"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <div class="metric-header">
+                                <span>Preference Match</span>
+                                <span id="preferenceMetric">91%</span>
+                            </div>
+
+                            <div class="metric-bar">
+
+                                <div
+                                    class="metric-fill"
+                                    id="preferenceBar"
+                                    style="width:91%"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <div class="metric-header">
+                                <span>Travel Efficiency</span>
+                                <span id="travelMetric">82%</span>
+                            </div>
+
+                            <div class="metric-bar">
+
+                                <div
+                                    class="metric-fill"
+                                    id="travelBar"
+                                    style="width:82%"
+                                ></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ITINERARY -->
+
+        <div
+            class="mt-5"
+            id="itinerarySection"
+        >
+
+            <div class="section-title">
+
+                <small>DEMO ITINERARY</small>
+
+                <h2>
+                    Suggested itinerary
+                </h2>
+
+            </div>
+
+            <div id="itineraryContainer"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ABOUT
+===================================================== -->
+
+<section
+    class="section"
+    id="about"
+>
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <small>ABOUT TRAVEL PAL</small>
+
+            <h2>
+                More than an itinerary generator.
+            </h2>
+
+            <p>
+                TravelPal is designed as an intelligent
+                travel recommendation and trip optimization
+                platform for India.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+
+                    <h4>Machine Learning</h4>
+
+                    <p>
+                        The future backend will use machine
+                        learning to personalize destination
+                        recommendations.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-diagram-3"></i>
+                    </div>
+
+                    <h4>MLOps</h4>
+
+                    <p>
+                        Model training, experiment tracking,
+                        versioning, deployment and monitoring
+                        will be managed using an MLOps pipeline.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i class="bi bi-database"></i>
+                    </div>
+
+                    <h4>Travel Database</h4>
+
+                    <p>
+                        The architecture supports states,
+                        destinations, tourist places, food,
+                        hotels and transportation data.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-6">
+
+                <h4>
+
+                    <i class="bi bi-compass"></i>
+
+                    TravelPal
+
+                </h4>
+
+                <p>
+                    AI-powered personalized travel planning
+                    for India.
+                </p>
+
+            </div>
+
+
+            <div class="col-lg-3">
+
+                <h6>Explore</h6>
+
+                <a href="#explore">
+                    Explore India
+                </a>
+
+                <a href="#planner">
+                    Plan My Trip
+                </a>
+
+                <a href="#about">
+                    About
+                </a>
+
+            </div>
+
+
+            <div class="col-lg-3">
+
+                <h6>Project</h6>
+
+                <p>
+                    MLOps-based personalized travel
+                    recommendation and trip optimization
+                    system.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <span>
+                © 2026 TravelPal
+            </span>
+
+            <span>
+                All India Travel Platform
+            </span>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   INDIA DATA
+
+   This is the main data structure.
+
+   Add more destinations/places here later.
+===================================================== */
+
+const indiaData = [
+
+    {
+        name: "Andhra Pradesh",
+        code: "andhra-pradesh",
+        type: "State",
+        theme: "c1",
+        description: "Temples, beaches, heritage and nature.",
+        destinations: [
+            {
+                name: "Visakhapatnam",
+                places: [
+                    "RK Beach",
+                    "Kailasagiri",
+                    "Araku Valley"
+                ],
+                interests: ["Beaches","Nature","Photography"],
+                budget: 12000
+            },
+            {
+                name: "Tirupati",
+                places: [
+                    "Tirumala Temple",
+                    "Kapila Theertham",
+                    "Sri Govindaraja Swamy Temple"
+                ],
+                interests: ["Spiritual","Culture"],
+                budget: 9000
+            }
+        ]
+    },
+
+
+    {
+        name: "Arunachal Pradesh",
+        code: "arunachal-pradesh",
+        type: "State",
+        theme: "c2",
+        description: "Mountains, monasteries, valleys and adventure.",
+        destinations: [
+            {
+                name: "Tawang",
+                places: [
+                    "Tawang Monastery",
+                    "Sela Pass",
+                    "Madhuri Lake"
+                ],
+                interests: ["Nature","Adventure","Spiritual"],
+                budget: 18000
+            }
+        ]
+    },
+
+
+    {
+        name: "Assam",
+        code: "assam",
+        type: "State",
+        theme: "c3",
+        description: "Wildlife, tea gardens and river landscapes.",
+        destinations: [
+            {
+                name: "Guwahati",
+                places: [
+                    "Kamakhya Temple",
+                    "Umananda Island",
+                    "Assam State Museum"
+                ],
+                interests: ["Spiritual","Culture"],
+                budget: 10000
+            },
+            {
+                name: "Kaziranga",
+                places: [
+                    "Kaziranga National Park",
+                    "Orchid Park"
+                ],
+                interests: ["Wildlife","Nature","Photography"],
+                budget: 15000
+            }
+        ]
+    },
+
+
+    {
+        name: "Bihar",
+        code: "bihar",
+        type: "State",
+        theme: "c4",
+        description: "Ancient history, Buddhism and heritage.",
+        destinations: [
+            {
+                name: "Bodh Gaya",
+                places: [
+                    "Mahabodhi Temple",
+                    "Great Buddha Statue",
+                    "Thai Monastery"
+                ],
+                interests: ["Spiritual","Culture","History"],
+                budget: 8000
+            }
+        ]
+    },
+
+
+    {
+        name: "Chhattisgarh",
+        code: "chhattisgarh",
+        type: "State",
+        theme: "c5",
+        description: "Waterfalls, forests, tribal culture and wildlife.",
+        destinations: [
+            {
+                name: "Jagdalpur",
+                places: [
+                    "Chitrakote Falls",
+                    "Tirathgarh Falls",
+                    "Kanger Valley National Park"
+                ],
+                interests: ["Nature","Adventure","Wildlife"],
+                budget: 11000
+            }
+        ]
+    },
+
+
+    {
+        name: "Goa",
+        code: "goa",
+        type: "State",
+        theme: "c2",
+        description: "Beaches, Portuguese heritage, food and nightlife.",
+        destinations: [
+            {
+                name: "Panaji",
+                places: [
+                    "Fontainhas",
+                    "Miramar Beach",
+                    "Dona Paula"
+                ],
+                interests: ["Beaches","Culture","Food"],
+                budget: 13000
+            },
+            {
+                name: "North Goa",
+                places: [
+                    "Baga Beach",
+                    "Calangute Beach",
+                    "Anjuna Beach",
+                    "Vagator Beach"
+                ],
+                interests: ["Beaches","Adventure","Food"],
+                budget: 15000
+            },
+            {
+                name: "South Goa",
+                places: [
+                    "Palolem Beach",
+                    "Colva Beach",
+                    "Basilica of Bom Jesus"
+                ],
+                interests: ["Beaches","Relaxation","Culture"],
+                budget: 14000
+            }
+        ]
+    },
+
+
+    {
+        name: "Gujarat",
+        code: "gujarat",
+        type: "State",
+        theme: "c6",
+        description: "Heritage, temples, wildlife and desert landscapes.",
+        destinations: [
+            {
+                name: "Ahmedabad",
+                places: [
+                    "Sabarmati Ashram",
+                    "Adalaj Stepwell",
+                    "Kankaria Lake"
+                ],
+                interests: ["History","Culture","Food"],
+                budget: 10000
+            },
+            {
+                name: "Kutch",
+                places: [
+                    "Rann of Kutch",
+                    "Kutch Museum",
+                    "Mandvi Beach"
+                ],
+                interests: ["Nature","Culture","Photography"],
+                budget: 14000
+            }
+        ]
+    },
+
+
+    {
+        name: "Haryana",
+        code: "haryana",
+        type: "State",
+        theme: "c7",
+        description: "Historic sites, culture and modern cities.",
+        destinations: [
+            {
+                name: "Kurukshetra",
+                places: [
+                    "Brahma Sarovar",
+                    "Jyotisar",
+                    "Krishna Museum"
+                ],
+                interests: ["History","Spiritual","Culture"],
+                budget: 8000
+            }
+        ]
+    },
+
+
+    {
+        name: "Himachal Pradesh",
+        code: "himachal-pradesh",
+        type: "State",
+        theme: "c5",
+        description: "Mountains, valleys, adventure and nature.",
+        destinations: [
+            {
+                name: "Shimla",
+                places: [
+                    "Mall Road",
+                    "The Ridge",
+                    "Jakhoo Temple"
+                ],
+                interests: ["Nature","Photography","Relaxation"],
+                budget: 15000
+            },
+            {
+                name: "Manali",
+                places: [
+                    "Solang Valley",
+                    "Hadimba Temple",
+                    "Old Manali"
+                ],
+                interests: ["Adventure","Nature","Photography"],
+                budget: 17000
+            },
+            {
+                name: "Dharamshala",
+                places: [
+                    "McLeod Ganj",
+                    "Dalai Lama Temple",
+                    "Triund"
+                ],
+                interests: ["Nature","Spiritual","Adventure"],
+                budget: 14000
+            }
+        ]
+    },
+
+
+    {
+        name: "Jharkhand",
+        code: "jharkhand",
+        type: "State",
+        theme: "c8",
+        description: "Waterfalls, forests and tribal culture.",
+        destinations: [
+            {
+                name: "Ranchi",
+                places: [
+                    "Dassam Falls",
+                    "Hundru Falls",
+                    "Jagannath Temple"
+                ],
+                interests: ["Nature","Photography"],
+                budget: 9000
+            }
+        ]
+    },
+
+
+    {
+        name: "Karnataka",
+        code: "karnataka",
+        type: "State",
+        theme: "c9",
+        description: "Heritage, beaches, coffee hills and wildlife.",
+        destinations: [
+            {
+                name: "Bengaluru",
+                places: [
+                    "Lalbagh",
+                    "Bangalore Palace",
+                    "Cubbon Park"
+                ],
+                interests: ["Culture","Nature","Food"],
+                budget: 11000
+            },
+            {
+                name: "Mysuru",
+                places: [
+                    "Mysore Palace",
+                    "Chamundi Hill",
+                    "Brindavan Gardens"
+                ],
+                interests: ["History","Culture","Photography"],
+                budget: 10000
+            },
+            {
+                name: "Coorg",
+                places: [
+                    "Abbey Falls",
+                    "Raja's Seat",
+                    "Coffee Plantations"
+                ],
+                interests: ["Nature","Relaxation","Photography"],
+                budget: 13000
+            }
+        ]
+    },
+
+
+    {
+        name: "Kerala",
+        code: "kerala",
+        type: "State",
+        theme: "c4",
+        description: "Backwaters, beaches, mountains and food.",
+        destinations: [
+            {
+                name: "Munnar",
+                places: [
+                    "Tea Gardens",
+                    "Eravikulam National Park",
+                    "Mattupetty Dam"
+                ],
+                interests: ["Nature","Photography","Relaxation"],
+                budget: 14000
+            },
+            {
+                name: "Alappuzha",
+                places: [
+                    "Alappuzha Backwaters",
+                    "Houseboat Experience",
+                    "Alappuzha Beach"
+                ],
+                interests: ["Nature","Relaxation","Food"],
+                budget: 15000
+            },
+            {
+                name: "Kochi",
+                places: [
+                    "Fort Kochi",
+                    "Chinese Fishing Nets",
+                    "Mattancherry Palace"
+                ],
+                interests: ["History","Culture","Food"],
+                budget: 11000
+            }
+        ]
+    },
+
+
+    {
+        name: "Madhya Pradesh",
+        code: "madhya-pradesh",
+        type: "State",
+        theme: "c1",
+        description: "Heritage, temples, forests and wildlife.",
+        destinations: [
+            {
+                name: "Indore",
+                places: [
+                    "Rajwada Palace",
+                    "Lal Bagh Palace",
+                    "Sarafa Bazaar"
+                ],
+                interests: ["Food","History","Culture"],
+                budget: 9000
+            },
+            {
+                name: "Khajuraho",
+                places: [
+                    "Khajuraho Temples",
+                    "Archaeological Museum"
+                ],
+                interests: ["History","Culture","Photography"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Maharashtra",
+        code: "maharashtra",
+        type: "State",
+        theme: "c1",
+        description: "Heritage, forts, beaches, food and cities.",
+        destinations: [
+            {
+                name: "Mumbai",
+                places: [
+                    "Gateway of India",
+                    "Marine Drive",
+                    "Chhatrapati Shivaji Maharaj Terminus",
+                    "Elephanta Caves"
+                ],
+                interests: ["History","Food","Culture","Photography"],
+                budget: 12000
+            },
+            {
+                name: "Pune",
+                places: [
+                    "Shaniwar Wada",
+                    "Sinhagad Fort",
+                    "Aga Khan Palace",
+                    "Pataleshwar Cave Temple"
+                ],
+                interests: ["History","Culture","Food"],
+                budget: 9000
+            },
+            {
+                name: "Chhatrapati Sambhajinagar",
+                places: [
+                    "Ajanta Caves",
+                    "Ellora Caves",
+                    "Bibi Ka Maqbara",
+                    "Daulatabad Fort"
+                ],
+                interests: ["History","Culture","Photography"],
+                budget: 10000
+            },
+            {
+                name: "Mahabaleshwar",
+                places: [
+                    "Venna Lake",
+                    "Arthur's Seat",
+                    "Pratapgad Fort"
+                ],
+                interests: ["Nature","Photography","Relaxation"],
+                budget: 11000
+            },
+            {
+                name: "Nashik",
+                places: [
+                    "Trimbakeshwar",
+                    "Pandavleni Caves",
+                    "Sula area"
+                ],
+                interests: ["Spiritual","History","Food"],
+                budget: 9000
+            }
+        ]
+    },
+
+
+    {
+        name: "Manipur",
+        code: "manipur",
+        type: "State",
+        theme: "c7",
+        description: "Lakes, hills, culture and natural landscapes.",
+        destinations: [
+            {
+                name: "Imphal",
+                places: [
+                    "Loktak Lake",
+                    "Kangla Fort",
+                    "Imphal War Cemetery"
+                ],
+                interests: ["Nature","History","Culture"],
+                budget: 11000
+            }
+        ]
+    },
+
+
+    {
+        name: "Meghalaya",
+        code: "meghalaya",
+        type: "State",
+        theme: "c4",
+        description: "Waterfalls, caves, forests and living root bridges.",
+        destinations: [
+            {
+                name: "Shillong",
+                places: [
+                    "Umiam Lake",
+                    "Elephant Falls",
+                    "Shillong Peak"
+                ],
+                interests: ["Nature","Photography","Adventure"],
+                budget: 13000
+            },
+            {
+                name: "Cherrapunji",
+                places: [
+                    "Nohkalikai Falls",
+                    "Mawsmai Cave",
+                    "Living Root Bridges"
+                ],
+                interests: ["Nature","Adventure","Photography"],
+                budget: 14000
+            }
+        ]
+    },
+
+
+    {
+        name: "Mizoram",
+        code: "mizoram",
+        type: "State",
+        theme: "c8",
+        description: "Hills, forests and peaceful landscapes.",
+        destinations: [
+            {
+                name: "Aizawl",
+                places: [
+                    "Durtlang Hills",
+                    "Mizoram State Museum",
+                    "Solomon's Temple"
+                ],
+                interests: ["Nature","Culture","Photography"],
+                budget: 12000
+            }
+        ]
+    },
+
+
+    {
+        name: "Nagaland",
+        code: "nagaland",
+        type: "State",
+        theme: "c3",
+        description: "Hills, tribal culture and festivals.",
+        destinations: [
+            {
+                name: "Kohima",
+                places: [
+                    "Kohima War Cemetery",
+                    "Naga Heritage Village",
+                    "Dzukou Valley"
+                ],
+                interests: ["Culture","Nature","Adventure"],
+                budget: 13000
+            }
+        ]
+    },
+
+
+    {
+        name: "Odisha",
+        code: "odisha",
+        type: "State",
+        theme: "c6",
+        description: "Temples, beaches, culture and wildlife.",
+        destinations: [
+            {
+                name: "Bhubaneswar",
+                places: [
+                    "Lingaraj Temple",
+                    "Udayagiri Caves",
+                    "Dhauli"
+                ],
+                interests: ["History","Spiritual","Culture"],
+                budget: 9000
+            },
+            {
+                name: "Puri",
+                places: [
+                    "Jagannath Temple",
+                    "Puri Beach",
+                    "Konark Sun Temple"
+                ],
+                interests: ["Spiritual","History","Beaches"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Punjab",
+        code: "punjab",
+        type: "State",
+        theme: "c7",
+        description: "Sikh heritage, food and historic sites.",
+        destinations: [
+            {
+                name: "Amritsar",
+                places: [
+                    "Golden Temple",
+                    "Jallianwala Bagh",
+                    "Wagah Border"
+                ],
+                interests: ["Spiritual","History","Food","Culture"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Rajasthan",
+        code: "rajasthan",
+        type: "State",
+        theme: "c3",
+        description: "Forts, palaces, desert, culture and food.",
+        destinations: [
+            {
+                name: "Jaipur",
+                places: [
+                    "Amber Fort",
+                    "Hawa Mahal",
+                    "City Palace",
+                    "Jantar Mantar"
+                ],
+                interests: ["History","Culture","Food","Photography"],
+                budget: 13000
+            },
+            {
+                name: "Udaipur",
+                places: [
+                    "City Palace",
+                    "Lake Pichola",
+                    "Jag Mandir"
+                ],
+                interests: ["History","Culture","Photography","Relaxation"],
+                budget: 14000
+            },
+            {
+                name: "Jaisalmer",
+                places: [
+                    "Jaisalmer Fort",
+                    "Sam Sand Dunes",
+                    "Patwon Ki Haveli"
+                ],
+                interests: ["History","Adventure","Culture"],
+                budget: 16000
+            }
+        ]
+    },
+
+
+    {
+        name: "Sikkim",
+        code: "sikkim",
+        type: "State",
+        theme: "c5",
+        description: "Mountains, monasteries, lakes and adventure.",
+        destinations: [
+            {
+                name: "Gangtok",
+                places: [
+                    "Tsomgo Lake",
+                    "Rumtek Monastery",
+                    "MG Marg"
+                ],
+                interests: ["Nature","Spiritual","Photography"],
+                budget: 15000
+            }
+        ]
+    },
+
+
+    {
+        name: "Tamil Nadu",
+        code: "tamil-nadu",
+        type: "State",
+        theme: "c6",
+        description: "Temples, beaches, heritage and hill stations.",
+        destinations: [
+            {
+                name: "Chennai",
+                places: [
+                    "Marina Beach",
+                    "Kapaleeshwarar Temple",
+                    "Fort St George"
+                ],
+                interests: ["Beaches","History","Culture","Food"],
+                budget: 10000
+            },
+            {
+                name: "Ooty",
+                places: [
+                    "Ooty Lake",
+                    "Botanical Gardens",
+                    "Doddabetta Peak"
+                ],
+                interests: ["Nature","Relaxation","Photography"],
+                budget: 12000
+            },
+            {
+                name: "Madurai",
+                places: [
+                    "Meenakshi Amman Temple",
+                    "Thirumalai Nayakkar Palace"
+                ],
+                interests: ["Spiritual","History","Culture"],
+                budget: 9000
+            }
+        ]
+    },
+
+
+    {
+        name: "Telangana",
+        code: "telangana",
+        type: "State",
+        theme: "c1",
+        description: "Heritage, food, forts and modern city life.",
+        destinations: [
+            {
+                name: "Hyderabad",
+                places: [
+                    "Charminar",
+                    "Golconda Fort",
+                    "Hussain Sagar",
+                    "Salar Jung Museum"
+                ],
+                interests: ["History","Food","Culture"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Tripura",
+        code: "tripura",
+        type: "State",
+        theme: "c8",
+        description: "Palaces, temples and green landscapes.",
+        destinations: [
+            {
+                name: "Agartala",
+                places: [
+                    "Ujjayanta Palace",
+                    "Neermahal",
+                    "Tripura Sundari Temple"
+                ],
+                interests: ["History","Culture","Spiritual"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Uttar Pradesh",
+        code: "uttar-pradesh",
+        type: "State",
+        theme: "c3",
+        description: "Heritage, spirituality and iconic monuments.",
+        destinations: [
+            {
+                name: "Agra",
+                places: [
+                    "Taj Mahal",
+                    "Agra Fort",
+                    "Mehtab Bagh"
+                ],
+                interests: ["History","Culture","Photography"],
+                budget: 10000
+            },
+            {
+                name: "Varanasi",
+                places: [
+                    "Ganges Ghats",
+                    "Kashi Vishwanath Temple",
+                    "Sarnath"
+                ],
+                interests: ["Spiritual","Culture","Photography"],
+                budget: 9000
+            }
+        ]
+    },
+
+
+    {
+        name: "Uttarakhand",
+        code: "uttarakhand",
+        type: "State",
+        theme: "c5",
+        description: "Mountains, temples, rivers and adventure.",
+        destinations: [
+            {
+                name: "Rishikesh",
+                places: [
+                    "Laxman Jhula area",
+                    "Ganga Aarti",
+                    "River Rafting"
+                ],
+                interests: ["Adventure","Spiritual","Nature"],
+                budget: 10000
+            },
+            {
+                name: "Nainital",
+                places: [
+                    "Naini Lake",
+                    "Naina Devi Temple",
+                    "Snow View Point"
+                ],
+                interests: ["Nature","Photography","Relaxation"],
+                budget: 12000
+            }
+        ]
+    },
+
+
+    {
+        name: "West Bengal",
+        code: "west-bengal",
+        type: "State",
+        theme: "c7",
+        description: "Culture, mountains, heritage and food.",
+        destinations: [
+            {
+                name: "Kolkata",
+                places: [
+                    "Victoria Memorial",
+                    "Howrah Bridge",
+                    "Indian Museum"
+                ],
+                interests: ["History","Culture","Food"],
+                budget: 10000
+            },
+            {
+                name: "Darjeeling",
+                places: [
+                    "Tiger Hill",
+                    "Darjeeling Himalayan Railway",
+                    "Batasia Loop"
+                ],
+                interests: ["Nature","Photography","Relaxation"],
+                budget: 13000
+            }
+        ]
+    },
+
+
+    /* =====================================================
+       UNION TERRITORIES
+    ===================================================== */
+
+    {
+        name: "Andaman and Nicobar Islands",
+        code: "andaman-nicobar",
+        type: "Union Territory",
+        theme: "c2",
+        description: "Beaches, islands, marine life and adventure.",
+        destinations: [
+            {
+                name: "Port Blair",
+                places: [
+                    "Cellular Jail",
+                    "Corbyn's Cove",
+                    "Ross Island"
+                ],
+                interests: ["Beaches","History","Adventure"],
+                budget: 20000
+            }
+        ]
+    },
+
+
+    {
+        name: "Chandigarh",
+        code: "chandigarh",
+        type: "Union Territory",
+        theme: "c8",
+        description: "Modern architecture, gardens and urban culture.",
+        destinations: [
+            {
+                name: "Chandigarh",
+                places: [
+                    "Rock Garden",
+                    "Sukhna Lake",
+                    "Rose Garden"
+                ],
+                interests: ["Nature","Photography","Culture"],
+                budget: 8000
+            }
+        ]
+    },
+
+
+    {
+        name: "Dadra and Nagar Haveli and Daman and Diu",
+        code: "dadra-daman-diu",
+        type: "Union Territory",
+        theme: "c2",
+        description: "Beaches, forts and nature.",
+        destinations: [
+            {
+                name: "Daman",
+                places: [
+                    "Devka Beach",
+                    "Diu Fort",
+                    "St Jerome Fort"
+                ],
+                interests: ["Beaches","History","Relaxation"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Delhi",
+        code: "delhi",
+        type: "Union Territory",
+        theme: "c3",
+        description: "History, monuments, culture and food.",
+        destinations: [
+            {
+                name: "New Delhi",
+                places: [
+                    "India Gate",
+                    "Red Fort",
+                    "Qutub Minar",
+                    "Humayun's Tomb"
+                ],
+                interests: ["History","Culture","Food","Photography"],
+                budget: 10000
+            }
+        ]
+    },
+
+
+    {
+        name: "Jammu and Kashmir",
+        code: "jammu-kashmir",
+        type: "Union Territory",
+        theme: "c5",
+        description: "Mountains, lakes, valleys and adventure.",
+        destinations: [
+            {
+                name: "Srinagar",
+                places: [
+                    "Dal Lake",
+                    "Mughal Gardens",
+                    "Shankaracharya Temple"
+                ],
+                interests: ["Nature","Photography","Relaxation"],
+                budget: 16000
+            },
+            {
+                name: "Gulmarg",
+                places: [
+                    "Gulmarg Gondola",
+                    "Gulmarg Meadows"
+                ],
+                interests: ["Adventure","Nature","Photography"],
+                budget: 18000
+            }
+        ]
+    },
+
+
+    {
+        name: "Ladakh",
+        code: "ladakh",
+        type: "Union Territory",
+        theme: "c5",
+        description: "High-altitude landscapes, monasteries and adventure.",
+        destinations: [
+            {
+                name: "Leh",
+                places: [
+                    "Leh Palace",
+                    "Shanti Stupa",
+                    "Thiksey Monastery",
+                    "Pangong Lake"
+                ],
+                interests: ["Adventure","Nature","Photography","Spiritual"],
+                budget: 20000
+            }
+        ]
+    },
+
+
+    {
+        name: "Lakshadweep",
+        code: "lakshadweep",
+        type: "Union Territory",
+        theme: "c2",
+        description: "Coral islands, beaches and marine activities.",
+        destinations: [
+            {
+                name: "Agatti",
+                places: [
+                    "Agatti Beach",
+                    "Lagoon",
+                    "Water Sports"
+                ],
+                interests: ["Beaches","Adventure","Relaxation"],
+                budget: 22000
+            }
+        ]
+    },
+
+
+    {
+        name: "Puducherry",
+        code: "puducherry",
+        type: "Union Territory",
+        theme: "c2",
+        description: "French heritage, beaches, cafes and spirituality.",
+        destinations: [
+            {
+                name: "Puducherry",
+                places: [
+                    "Promenade Beach",
+                    "Auroville",
+                    "Sri Aurobindo Ashram"
+                ],
+                interests: ["Beaches","Culture","Relaxation","Spiritual"],
+                budget: 11000
+            }
+        ]
+    }
+
+];
+
+
+/* =====================================================
+   SHOW STATES
+===================================================== */
+
+/* State photos embedded; Puducherry image supplied by user */
+const stateImages = {
+        "Andhra Pradesh": "assets/asset-03-52eca6b2.jpg",
+        "Bihar": "assets/asset-04-a6c109cf.jpg",
+        "Tamil Nadu": "assets/asset-05-e115daf4.jpg",
+        "Kerala": "assets/asset-06-d52c208f.jpg",
+        "Karnataka": "assets/asset-07-6526f05b.jpg",
+        "Goa": "assets/asset-08-51b78c2a.jpg",
+        "Odisha": "assets/asset-09-9c4b30d6.jpg",
+        "Chhattisgarh": "assets/asset-10-ed4b6ecf.jpg",
+        "Maharashtra": "assets/asset-11-814ff439.jpg",
+        "Punjab": "assets/asset-12-35298f73.jpg",
+        "Madhya Pradesh": "assets/asset-13-48858e8b.jpg",
+        "Jharkhand": "assets/asset-14-2553cf2f.jpg",
+        "West Bengal": "assets/asset-15-e9b44077.jpg",
+            "Delhi": "assets/asset-16-5e78331d.jpg",
+        "Haryana": "assets/asset-17-16feff29.jpg",
+        "Himachal Pradesh": "assets/asset-18-6984b951.jpg",
+        "Ladakh": "assets/asset-19-2087688d.jpg",
+        "Uttarakhand": "assets/asset-20-4df25800.jpg",
+        "Uttar Pradesh": "assets/asset-21-21f62313.jpg",
+        "Telangana": "assets/asset-22-a4ac2af7.jpg",
+        "Arunachal Pradesh": "assets/asset-23-7c0cca48.jpg",
+        "Assam": "assets/asset-24-f45b6971.jpg",
+        "Chandigarh": "assets/asset-25-22c7534e.jpg",
+        "Dadra and Nagar Haveli and Daman and Diu": "assets/asset-26-733f2a62.jpg",
+        "Lakshadweep": "assets/asset-27-5bea12f9.jpg",
+        "Manipur": "assets/asset-28-df559aed.jpg",
+        "Mizoram": "assets/asset-29-cd116eae.jpg",
+        "Nagaland": "assets/asset-30-df531820.jpg",
+        "Puducherry": "assets/asset-31-1614cdf0.jpg"
+
+,
+    "Andaman and Nicobar Islands": "assets/asset-32-553c09c6.jpg",
+    "Sikkim": "assets/asset-33-0772b1e0.jpg",
+    "Meghalaya": "assets/asset-34-9398bae0.jpg",
+    "Gujarat": "assets/asset-35-41f10b2d.jpg",
+    "Rajasthan": "assets/asset-36-e8267d07.jpg",
+    "Jammu and Kashmir": "assets/asset-37-7504ccfd.jpg",
+
+        "Tripura": "assets/asset-38-7d48a8ab.jpg",
+};
+
+
+function displayStates(data = indiaData) {
+
+    const container =
+        document.getElementById("stateContainer");
+
+    container.innerHTML = "";
+
+
+    if (data.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="col-12 text-center">
+
+                <div class="alert alert-light">
+
+                    No state or destination found.
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    data.forEach((state, index) => {
+
+        const destinationNames =
+            state.destinations
+                .map(destination => destination.name)
+                .slice(0, 3)
+                .join(" • ");
+
+
+        const card = document.createElement("div");
+
+        card.className =
+            "col-md-6 col-lg-4";
+
+
+        card.innerHTML = `
+
+            <div class="state-card">
+
+                <div class="state-top ${state.theme}"
+                     style="${stateImages[state.name] ? `background-image: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url(${stateImages[state.name]}); background-size: cover; background-position: center;` : ''}">
+
+                    <span>
+                        ${state.name}
+                    </span>
+
+                </div>
+
+
+                <div class="state-body">
+
+                    <small class="text-muted">
+                        ${state.type}
+                    </small>
+
+                    <h5 class="mt-2">
+                        ${state.name}
+                    </h5>
+
+                    <p>
+                        ${state.description}
+                    </p>
+
+                    <p>
+                        <strong>Destinations:</strong>
+                        ${destinationNames}
+                    </p>
+
+                    <button
+                        onclick="showState('${state.code}')"
+                    >
+
+                        Explore ${state.name}
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(card);
+
     });
 
-    // ── Render results ────────────────────────────
-    function renderResults(recommendations, query) {
-        const section = document.getElementById("resultsSection");
-        const header = document.getElementById("resultsHeader");
-        const grid = document.getElementById("cardsGrid");
+}
 
-        header.textContent = `📍 ${recommendations.length} destinations found`;
-        grid.innerHTML = "";
 
-        recommendations.forEach((dest, i) => {
-            const badgeClass = dest.category === "Hidden Gem"
-                ? "badge-hidden-gem" : "badge-well-known";
+/* =====================================================
+   SEARCH
+===================================================== */
 
-            const card = document.createElement("div");
-            card.className = "dest-card";
-            card.innerHTML = `
-                <div class="dest-info">
-                    <h3>${i + 1}. ${dest.name}</h3>
-                    <div class="dest-meta">
-                        <span>📍 ${dest.city}, ${dest.state}</span><br>
-                        <span>🏛️ ${dest.type}</span>
-                        <span>🌟 ${dest.significance}</span><br>
-                        <span>💰 ₹${dest.entrance_fee_inr}</span>
-                        <span>⏱️ ${dest.time_needed_hrs} hrs</span>
-                    </div>
-                </div>
-                <div class="dest-stats">
-                    <div class="dest-rating">${dest.avg_rating.toFixed(1)} <small>/ 5</small></div>
-                    <div class="dest-badge ${badgeClass}">${dest.category}</div>
-                    ${dest.score > 0 ? `<div class="dest-score">Match: ${(dest.score * 100).toFixed(0)}%</div>` : ""}
-                </div>
-            `;
-            grid.appendChild(card);
+function searchStates() {
+
+    const query =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    if (!query) {
+
+        displayStates(indiaData);
+
+        return;
+
+    }
+
+
+    const filtered =
+        indiaData.filter(state => {
+
+            const stateMatch =
+                state.name
+                    .toLowerCase()
+                    .includes(query);
+
+
+            const destinationMatch =
+                state.destinations.some(destination =>
+
+                    destination.name
+                        .toLowerCase()
+                        .includes(query)
+
+                );
+
+
+            const placeMatch =
+                state.destinations.some(destination =>
+
+                    destination.places.some(place =>
+
+                        place
+                            .toLowerCase()
+                            .includes(query)
+
+                    )
+
+                );
+
+
+            return (
+                stateMatch ||
+                destinationMatch ||
+                placeMatch
+            );
+
         });
 
-        section.classList.add("visible");
+
+    displayStates(filtered);
+
+}
+
+
+/* =====================================================
+   SHOW STATE
+===================================================== */
+
+function showState(code) {
+
+    const state =
+        indiaData.find(
+            item => item.code === code
+        );
+
+
+    if (!state) {
+        return;
     }
+
+    // Save state data to localStorage for state.html to read
+    localStorage.setItem('selectedState', JSON.stringify(state));
+
+    // Redirect to state.html
+    window.location.href = 'state.html';
+
+}
+
+
+/* =====================================================
+   INTEREST SELECTION
+===================================================== */
+
+function toggleInterest(button) {
+
+    button.classList.toggle("active");
+
+}
+
+
+/* =====================================================
+   GENERATE TRIP
+===================================================== */
+
+/* ---- API connection (FastAPI from docker compose) ---- */
+
+const API_URL = "http://localhost:8000/recommendations";
+
+/* The page's interest buttons -> words the model understands */
+const INTEREST_TO_API = {
+    "History":     ["Historical"],
+    "Nature":      ["Natural"],
+    "Beaches":     ["Beach"],
+    "Adventure":   ["Adventure"],
+    "Food":        [],
+    "Culture":     ["Historical"],
+    "Spiritual":   ["Temple"],
+    "Wildlife":    ["Wildlife"],
+    "Photography": ["Natural"],
+    "Relaxation":  ["Natural"]
+};
+
+/* Rupee budget per person -> low / mid / high used by the API.
+   Change these two numbers to adjust the cutoffs. */
+const BUDGET_LOW_BELOW  = 8000;
+const BUDGET_MID_BELOW  = 20000;
+
+function budgetBand(budget) {
+    if (budget < BUDGET_LOW_BELOW) { return "low"; }
+    if (budget < BUDGET_MID_BELOW) { return "mid"; }
+    return "high";
+}
+
+function esc(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+async function generateTrip() {
+
+    const startCity  = document.getElementById("startCity").value.trim();
+    const budget     = Number(document.getElementById("budget").value);
+    const duration   = Number(document.getElementById("duration").value);
+    const travellers = Number(document.getElementById("travellers").value);
+
+    if (!startCity || !budget) {
+        alert("Please enter your starting city and budget.");
+        return;
+    }
+
+    const selectedInterests = [];
+    document.querySelectorAll(".interest.active").forEach(button => {
+        selectedInterests.push(button.innerText.trim());
+    });
+
+    const apiInterests = [];
+    selectedInterests.forEach(label => {
+        (INTEREST_TO_API[label] || []).forEach(word => {
+            if (!apiInterests.includes(word)) { apiInterests.push(word); }
+        });
+    });
+
+    const button = document.querySelector('[onclick="generateTrip()"]');
+    const originalButtonHTML = button ? button.innerHTML : "";
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = "Finding places...";
+    }
+
+    try {
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                budget: budgetBand(budget),
+                duration_days: duration,
+                interests: apiInterests,
+                top_n: 6,
+                category: "all"
+            })
+        });
+
+        if (response.status === 429) {
+            alert("Too many requests. Please wait a minute and try again.");
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error("API answered with status " + response.status);
+        }
+
+        const data = await response.json();
+        const places = data.recommendations || [];
+
+        displayRecommendations(places, startCity, budget, duration, travellers);
+
+        /* The reality score and itinerary expect this shape */
+        const shaped = places.map(place => ({
+            budget: Number(place.entrance_fee_inr) || 0
+        }));
+
+        calculateRealityScore(budget, duration, travellers, shaped);
+
+        createItinerary(
+            { places: places.map(place => esc(place.name)) },
+            duration
+        );
+
+        const results = document.getElementById("resultsSection");
+        results.style.display = "block";
+        results.scrollIntoView({ behavior: "smooth" });
+
+    } catch (error) {
+
+        console.error("TravelPal API error:", error);
+
+        alert(
+            "Could not reach the TravelPal server.\n\n" +
+            "Make sure Docker is running (docker compose up -d) " +
+            "and the API is open at http://localhost:8000/health"
+        );
+
+    } finally {
+
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = originalButtonHTML;
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   DISPLAY RECOMMENDATIONS
+===================================================== */
+
+function displayRecommendations(
+    recommendations,
+    startCity,
+    budget,
+    duration,
+    travellers
+) {
+
+    const container = document.getElementById("recommendationContainer");
+
+    container.innerHTML = "";
+
+    document.getElementById("resultDescription").innerText =
+        `Based on a ${duration}-day trip from ${startCity}, ` +
+        `for ${travellers} traveller(s) with a budget of ` +
+        `\u20B9${budget.toLocaleString("en-IN")} per person.`;
+
+    if (recommendations.length === 0) {
+        container.innerHTML =
+            '<p class="text-center text-muted">' +
+            'No places matched. Try different interests or a higher budget.' +
+            '</p>';
+        return;
+    }
+
+    recommendations.forEach(item => {
+
+        const card = document.createElement("div");
+        card.className = "col-md-6 col-lg-4";
+
+        const fee = Number(item.entrance_fee_inr) || 0;
+        const hours = Number(item.time_needed_hrs) || 0;
+        const rating = Number(item.avg_rating) || 0;
+
+        const mapsLink =
+            "https://www.google.com/maps/search/?api=1&query=" +
+            encodeURIComponent(
+                item.name + " " + item.city + " " + item.state
+            );
+
+        card.innerHTML = `
+
+            <div class="result-card">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+                        <small class="text-muted">
+                            ${esc(item.city)}, ${esc(item.state)}
+                        </small>
+                        <h4 class="fw-bold mt-1">
+                            ${esc(item.name)}
+                        </h4>
+                    </div>
+
+                    <div class="match-score">
+                        ${rating.toFixed(1)}\u2605
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+                    <span class="tag">${esc(item.type)}</span>
+                    <span class="tag">${esc(item.significance)}</span>
+                    <span class="tag">${esc(item.category)}</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <small>Entrance fee</small>
+                    <strong>${fee === 0 ? "Free" : "\u20B9" + fee.toLocaleString("en-IN")}</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mt-1">
+                    <small>Time needed</small>
+                    <strong>${hours} hr</strong>
+                </div>
+
+                <a
+                    class="btn-main w-100 mt-3 d-block text-center"
+                    href="${mapsLink}"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    View on map
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+            </div>
+
+        `;
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+/* =====================================================
+   DESTINATION SELECTION
+===================================================== */
+
+function selectDestination(destination) {
+
+    alert(
+        `${destination} selected.\n\n` +
+        `In the next version this button will open the ` +
+        `complete destination details page.`
+    );
+
+}
+
+
+/* =====================================================
+   REALITY SCORE
+===================================================== */
+
+function calculateRealityScore(
+    budget,
+    duration,
+    travellers,
+    recommendations
+) {
+
+    let budgetScore = 85;
+
+    let timeScore = 85;
+
+    let preferenceScore = 88;
+
+    let travelScore = 80;
+
+
+    /*
+       Budget calculation
+    */
+
+    if (
+        recommendations.length > 0 &&
+        budget >= recommendations[0].budget
+    ) {
+
+        budgetScore = 92;
+
+    } else if (
+        recommendations.length > 0 &&
+        budget >= recommendations[0].budget * 0.75
+    ) {
+
+        budgetScore = 78;
+
+    } else {
+
+        budgetScore = 60;
+
+    }
+
+
+    /*
+       Duration
+    */
+
+    if (duration >= 3 && duration <= 7) {
+
+        timeScore = 90;
+
+    } else if (duration > 7) {
+
+        timeScore = 80;
+
+    } else {
+
+        timeScore = 70;
+
+    }
+
+
+    /*
+       Overall score
+    */
+
+    const overall = Math.round(
+
+        (
+            budgetScore * 0.30
+            +
+            timeScore * 0.25
+            +
+            travelScore * 0.20
+            +
+            preferenceScore * 0.15
+            +
+            85 * 0.10
+        )
+
+    );
+
+
+    document.getElementById(
+        "realityScore"
+    ).innerHTML =
+
+        `${overall}<span>/100</span>`;
+
+
+    updateMetric(
+        "budgetMetric",
+        "budgetBar",
+        budgetScore
+    );
+
+
+    updateMetric(
+        "timeMetric",
+        "timeBar",
+        timeScore
+    );
+
+
+    updateMetric(
+        "preferenceMetric",
+        "preferenceBar",
+        preferenceScore
+    );
+
+
+    updateMetric(
+        "travelMetric",
+        "travelBar",
+        travelScore
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE METRIC
+===================================================== */
+
+function updateMetric(
+    textId,
+    barId,
+    value
+) {
+
+    document.getElementById(
+        textId
+    ).innerText = `${value}%`;
+
+
+    document.getElementById(
+        barId
+    ).style.width = `${value}%`;
+
+}
+
+
+/* =====================================================
+   ITINERARY
+===================================================== */
+
+function createItinerary(
+    destination,
+    duration
+) {
+
+    const container =
+        document.getElementById(
+            "itineraryContainer"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (!destination) {
+
+        return;
+
+    }
+
+
+    for (
+        let day = 1;
+        day <= duration;
+        day++
+    ) {
+
+        const place =
+            destination.places[
+                (day - 1)
+                %
+                destination.places.length
+            ];
+
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "itinerary-card";
+
+
+        card.innerHTML = `
+
+            <div class="d-flex gap-3">
+
+                <div class="day-number">
+
+                    ${day}
+
+                </div>
+
+
+                <div>
+
+                    <h5 class="fw-bold">
+
+                        Day ${day}
+
+                    </h5>
+
+                    <p class="mb-1">
+
+                        <strong>
+                            Morning:
+                        </strong>
+
+                        Breakfast and local exploration
+
+                    </p>
+
+
+                    <p class="mb-1">
+
+                        <strong>
+                            Main Activity:
+                        </strong>
+
+                        ${place}
+
+                    </p>
+
+
+                    <p class="mb-0 text-muted">
+
+                        Evening: Local food and relaxation
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(card);
+
+    }
+
+}
+
+
+/* =====================================================
+   SCROLL FUNCTIONS
+===================================================== */
+
+function scrollToPlanner() {
+
+    document
+        .getElementById("planner")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+function scrollToExplore() {
+
+    document
+        .getElementById("explore")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+displayStates(indiaData);
+
+
 </script>
 
+
+<!-- Bootstrap JavaScript -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
 </body>
+
 </html>
+
+
+
