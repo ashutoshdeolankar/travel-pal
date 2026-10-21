@@ -1,6 +1,6 @@
 # Travel Pal
 
-An MLOps-based smart travel recommendation system for India. You give it a budget, trip length and interests (for example "Temple"), and it returns the best-matching places from a database of about 9,000 destinations.
+An MLOps-based smart travel recommendation system for India. You give it a budget, trip length and interests (for example "Temple"), and it returns the best-matching places from a database of about 9,000 destinations (9,003 after cleaning).
 
 See `docs/Travel_Pal_Build_Roadmap.md` (or the team's shared roadmap doc) for the full phase-by-phase build plan.
 
@@ -71,6 +71,8 @@ Requirements: Python 3.11, PostgreSQL 16 (or Docker), Git.
    ```
    Warning: `load_to_db` replaces the `destinations` and `accommodations` tables.
 
+   Both `train` and `load_to_db` apply the same location cleaning (`src/db/state_fixes.py`): a few cities saved with the state "Unknown" get their real state, and places outside India (Jerez in Spain, Delicias in Mexico) are removed. The model finds a place by its row position, so **whenever you retrain, reload the database too** (and the other way round). `tests/test_model_alignment.py` fails if the two disagree.
+
 4. **Run the API locally**
    ```bash
    uvicorn src.api.main:app --reload
@@ -125,7 +127,7 @@ curl -X POST http://localhost:8000/recommendations \
 
 | Field | Values |
 |---|---|
-| `budget` | `low`, `mid` or `high` (compared with the entrance fee) |
+| `budget` | `low` (entrance fee up to 20 rupees), `mid` (up to 50 rupees) or `high` (no limit) |
 | `duration_days` | 1 or more |
 | `interests` | a list such as `["Temple", "Historical"]`; words like temple, fort, beach and wildlife are mapped to the model's categories; an empty list ranks by rating |
 | `top_n` | 1 to 50 (default 10) |
@@ -154,9 +156,9 @@ The trip planner calls `POST /recommendations`. Each state page in Explore India
 
 ## Known limitations
 
-- Budget bands are based on entrance fees, which are mostly free or very low, so `low`, `mid` and `high` differ little.
+- **Budget is only a rough filter.** Entrance fees in the data are between 0 and 100 rupees (44% of places are free), so the budget bands only hide the few more expensive places. A real "can I afford this trip" check would need hotel, food and transport costs; the accommodation data (500 listings, most states with fewer than 10) is too thin to estimate them reliably.
 - The "Hidden Gem" classifier has low accuracy (about 55% on a small test set).
-- The database has no places for Jammu and Kashmir or Ladakh, and about 240 places have the state "Unknown".
+- Jammu and Kashmir (112 places) and Ladakh (29 places) are found only through the cities listed in `src/db/state_fixes.py`, and one place (Manakpur Kholgaman) still has the state "Unknown".
 - The Trip Reality Score and the day-by-day itinerary on the website are demonstration logic.
 - The cache and rate limiter live in the API's memory, so they reset when the API restarts.
 
