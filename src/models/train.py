@@ -1,6 +1,6 @@
 """
-Travel Pal — Phase 3/4 (v2): train the content-based recommendation model.
-Updated for the larger combined dataset — numeric feature renamed from
+Travel Pal - Phase 3/4 (v2): train the content-based recommendation model.
+Updated for the larger combined dataset - numeric feature renamed from
 num_reviews_lakhs to num_reviews (a real review count now, not a proxy).
 """
 
@@ -13,6 +13,8 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+from src.db.state_fixes import clean_locations
+
 PROCESSED_DIR = Path(__file__).resolve().parents[2] / "data" / "processed"
 MODEL_DIR = PROCESSED_DIR / "model"
 DESTINATIONS_FILE = PROCESSED_DIR / "destinations_clean.csv"
@@ -24,7 +26,7 @@ NUMERIC_COLS = ["avg_rating", "num_reviews"]
 def load_clean_destinations() -> pd.DataFrame:
     if not DESTINATIONS_FILE.exists():
         raise FileNotFoundError(f"{DESTINATIONS_FILE} not found. Run preprocess first.")
-    return pd.read_csv(DESTINATIONS_FILE)
+    return clean_locations(pd.read_csv(DESTINATIONS_FILE))
 
 
 def build_feature_matrix(df: pd.DataFrame):

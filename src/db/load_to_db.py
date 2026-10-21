@@ -1,5 +1,5 @@
 """
-Travel Pal — Phase 6: load cleaned data into Postgres.
+Travel Pal - Phase 6: load cleaned data into Postgres.
 
 Run with:
     python -m src.db.load_to_db
@@ -14,6 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.db.connection import engine
+from src.db.state_fixes import fix_unknown_states
 
 PROCESSED_DIR = Path(__file__).resolve().parents[2] / "data" / "processed"
 DESTINATIONS_FILE = PROCESSED_DIR / "destinations_clean.csv"
@@ -22,6 +23,8 @@ ACCOMMODATIONS_FILE = PROCESSED_DIR / "accommodations_clean.csv"
 
 def load_table(csv_path: Path, table_name: str) -> int:
     df = pd.read_csv(csv_path)
+    if table_name == "destinations":
+        df = fix_unknown_states(df)
     df.to_sql(table_name, engine, if_exists="replace", index=False)
     return len(df)
 
