@@ -156,7 +156,7 @@ The trip planner calls `POST /recommendations`. Each state page in Explore India
 
 ## Known limitations
 
-- **Budget is only a rough filter.** Entrance fees in the data are between 0 and 100 rupees (44% of places are free), so the budget bands only hide the few more expensive places. A real "can I afford this trip" check would need hotel, food and transport costs; the accommodation data (500 listings, most states with fewer than 10) is too thin to estimate them reliably.
+- **Budget is only a rough filter.** Entrance fees (and visit times) are **estimates**, not scraped values: `preprocess.py` guesses them from each place's type (religious, historical, natural and so on), so they range only from 0 to 100 rupees (44% of places are free). The budget bands therefore only hide the few places estimated as more expensive. A real "can I afford this trip" check would need hotel, food and transport costs; the accommodation data (500 listings, most states with fewer than 10) is too thin to estimate them reliably.
 - The "Hidden Gem" classifier has low accuracy (about 55% on a small test set).
 - Jammu and Kashmir (112 places) and Ladakh (29 places) are found only through the cities listed in `src/db/state_fixes.py`, and one place (Manakpur Kholgaman) still has the state "Unknown".
 - The Trip Reality Score and the day-by-day itinerary on the website are demonstration logic.
