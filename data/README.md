@@ -1,66 +1,89 @@
-# Data — schema & sources
+# Travel Pal – Data
 
-Phase 1 scope: India-only, destinations + accommodations (food/restaurants can follow in a later iteration). Raw CSVs go in `data/raw/` (git-ignored) and get loaded via `src/data/load_data.py`.
+This folder holds the data used by Travel Pal. The raw files are **not stored in git**
+(they are large and listed in `.gitignore`), so you must download them once and put them
+in `data/raw/` before running the pipeline.
 
-## `destinations` (raw source: Kaggle "Travel Dataset: Guide to India's Must See Places")
-| field (target, post-cleaning) | raw column in source CSV | type | notes |
-|---|---|---|---|
-| id | _(generate — no id in source)_ | int | assign on load |
-| name | Name | string | |
-| city | City | string | |
-| state | State | string | |
-| zone | Zone | categorical | Northern / Southern / etc. |
-| type | Type | categorical | Temple / War Memorial / Natural Park / etc. |
-| avg_rating | Google review rating | float | 0–5 |
-| num_reviews | Number of google review in lakhs | float | popularity proxy |
-| entrance_fee_inr | Entrance Fee in INR | float | used for budget filtering |
-| time_needed_hrs | time needed to visit in hrs | float | feeds itinerary planning (Phase 12) |
-| significance | Significance | categorical | Historical / Religious / Environmental / etc. |
-| best_time_to_visit | Best time to visit | string | |
+## Folder layout
 
-## `accommodations` (raw source: Kaggle "India's Airbnb Gems 2024")
-| field (target, post-cleaning) | raw column in source CSV | type | notes |
-|---|---|---|---|
-| id | _(generate — no id in source)_ | int | assign on load |
-| name | name | string | |
-| address | address | string | |
-| lat, lon | location/lat, location/lng | float | for future distance-to-destination matching |
-| price_per_night | pricing/rate/amount | float | used for budget filtering |
-| avg_rating | stars | float | |
-| num_guests | numberOfGuests | int | |
-| room_type | roomType | categorical | |
-| is_superhost | isHostedBySuperhost | bool | possible quality signal |
+```
+data/
+  raw/        <- you put the 2 downloaded CSV files here (not in git)
+  processed/  <- created by the preprocessing step (not in git)
+```
 
-Note: this accommodations dataset isn't linked to specific destinations by ID — Phase 2 will need a step to associate listings with the nearest destination (e.g. by city name match, or lat/lon distance once both have coordinates).
+## Raw files
 
-## `restaurants`
-| field | type | notes |
+| File (exact name) | Size | What it contains |
 |---|---|---|
-| id | string/int | primary key |
-| destination_id | FK → destinations.id | |
-| name | string | |
-| cuisine_type | categorical | |
-| price_bucket | categorical | |
-| avg_rating | float | |
+| `travelpal_india_combined_v2.csv` | ~24 MB | Tourist places in India (about 15,000 rows before cleaning). |
+| `india_airbnb_listings.csv` | ~58 KB | Stays / accommodation listings (500 rows used). |
 
-## `reviews` (optional for v1)
-| field | type | notes |
-|---|---|---|
-| id | string/int | primary key |
-| target_type | categorical | destination / hotel / restaurant |
-| target_id | FK | |
-| rating | float | |
-| text | text | |
+### Where the data came from
 
-## `user_preferences` (captured per request, not necessarily persisted in v1)
-| field | type | notes |
-|---|---|---|
-| budget | categorical/float | |
-| duration_days | int | |
-| interests | list[string] | e.g. ["beach", "food", "hiking"] |
+- **`travelpal_india_combined_v2.csv`** was put together by our team by combining several
+  public sources: Kaggle datasets, GitHub datasets and public travel websites. We merged
+  them into one file with a common set of columns.
+- **`india_airbnb_listings.csv`** comes from a public GitHub dataset of Airbnb-style listings.
 
-## Sources
+Please check the licence of each original source before reusing the data outside this
+college project.
 
-- [x] **Destinations**: Kaggle — "Travel Dataset: Guide to India's Must See Places" (`saketk511/travel-dataset-guide-to-indias-must-see-places`). Check the dataset page for its license before publishing/redistributing.
-- [x] **Accommodations**: Kaggle — "India's Airbnb Gems 2024: Trending Picks" (`kanchana1990/indias-airbnb-gems-2024-trending-picks`). Author states it was collected respecting Airbnb's platform terms — still confirm the license on the dataset page before any redistribution.
-- [ ] **Restaurants/food** — not sourced yet, planned as a later addition.
+### Main columns in the places file
+
+`destination_id, name, city, state, country, category, subcategory, rating, reviews_count,
+description, tags, best_time, latitude, longitude, address`
+
+### How to get the files
+
+The files are shared with the team through the GitHub repository (see the repo's
+**Releases** page, or ask the team for the link):
+
+1. Download both CSV files.
+2. Copy them into `data/raw/` with exactly the names above.
+
+## Run order (after the files are in `data/raw/`)
+
+Run these from the project root with the virtual environment active:
+
+```powershell
+python -m src.features.preprocess     # clean the raw files -> data/processed/
+python -m src.models.train            # train the recommender (also logs to MLflow)
+docker compose -f docker/docker-compose.yml up -d db   # start PostgreSQL
+python -m src.db.load_to_db           # load cleaned data into the database
+```
+
+Important: the trained model finds places by **row position**, so the model and the
+database must be built from the same cleaned data, in the same order. If you re-run
+`preprocess`, re-run `train` and `load_to_db` too. `tests/test_model_alignment.py`
+checks this.
+
+## What the cleaning step does
+
+- Drops rows with no rating, category or city.
+- Drops business/service rows that are not places to visit (travel agencies, hotels, taxi
+  services, government offices and similar).
+- Removes duplicates (same name in the same city).
+- Fills a missing state from the city when possible; places still unknown are labelled
+  `Unknown`. A few known cities are fixed by hand (`src/db/state_fixes.py`).
+- Removes places that are not in India (98 rows were removed).
+- Creates a `significance` tag (Religious, Historical, Natural, Recreational, General)
+  from keywords in the name, category and description.
+- Tags each place Hidden Gem or Well-Known from its rating and number of reviews.
+
+After cleaning, the database has **9,003 destinations** and **500 accommodations**.
+
+## Important: some columns are estimates, not real data
+
+`entrance_fee_inr` and `time_needed_hrs` are **not in the source data**. They are
+**estimated from the place's `significance` tag** in `src/features/preprocess.py`
+(for example, religious places are mostly free, some historical places get a small fee).
+
+Because of this:
+
+- Treat these values as rough guesses, not real ticket prices or visit times.
+- The budget filter (low = fee up to ₹20, mid = up to ₹50, high = no limit) and the
+  trip-duration filter are based on these estimates.
+
+The **Hidden Gem / Well-Known** classifier only reaches about 55% accuracy (close to a
+coin flip), so the website does not show that label to users.
