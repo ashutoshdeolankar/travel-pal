@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TravelPal | State</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: #f7f8fc;
+            color: #222;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.97);
+            padding: 15px 6%;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .navbar-brand span {
+            color: #ff8a3d;
+        }
+
+        .nav-link {
+            color: white !important;
+            margin-left: 20px;
+        }
+
+        .nav-link:hover {
+            color: #ff9b5c !important;
+        }
+
+        /* ================= HERO ================= */
+
+        .state-hero {
+            min-height: 560px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            position: relative;
+
+            background:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.40),
+                    rgba(0, 0, 0, 0.60)
+                ),
+                none;
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-content {
+            color: white;
+            max-width: 900px;
+            padding: 30px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+
+            padding: 10px 22px;
+            border-radius: 30px;
+
+            margin-bottom: 20px;
+
+            backdrop-filter: blur(5px);
+        }
+
+        .hero-content h1 {
+            font-size: clamp(48px, 8vw, 85px);
+            font-weight: 800;
+
+            margin-bottom: 18px;
+
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            line-height: 1.7;
+            max-width: 750px;
+            margin: auto;
+        }
+
+        /* ================= SECTION ================= */
+
+        .section {
+            padding: 80px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 38px;
+            font-weight: 700;
+        }
+
+        .section-title p {
+            color: #777;
+            margin-top: 10px;
+        }
+
+        /* ================= DESTINATION CARDS ================= */
+
+        .destination-card {
+            background: white;
+
+            border-radius: 22px;
+
+            padding: 30px;
+
+            height: 100%;
+
+            border: 1px solid #eeeeee;
+
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+
+            transition: 0.3s;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-8px);
+
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .destination-icon {
+            width: 58px;
+            height: 58px;
+
+            border-radius: 16px;
+
+            background: #fff0e7;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 26px;
+
+            color: #ff6b2c;
+
+            margin-bottom: 20px;
+        }
+
+        .destination-card h3 {
+            font-size: 25px;
+            font-weight: 700;
+
+            margin-bottom: 18px;
+        }
+
+        .destination-card h6 {
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        /* ================= PLACE LIST ================= */
+
+        .place-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .place-list li {
+            padding: 9px 0;
+
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .place-list li:last-child {
+            border-bottom: none;
+        }
+
+        .place-list i {
+            color: #ff6b2c;
+            margin-right: 8px;
+        }
+
+        /* ================= TAGS ================= */
+
+        .tag {
+            display: inline-block;
+
+            background: #f1f3f5;
+
+            padding: 7px 14px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            margin: 4px 3px;
+        }
+
+        /* ================= BUDGET ================= */
+
+        .budget-section {
+            background: #111827;
+
+            color: white;
+
+            border-radius: 30px;
+
+            padding: 55px;
+
+            text-align: center;
+        }
+
+        .budget-section h2 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .budget-value {
+            font-size: 48px;
+
+            font-weight: 800;
+
+            color: #ff914d;
+
+            margin: 20px 0;
+        }
+
+        .budget-note {
+            color: #cbd5e1;
+
+            max-width: 700px;
+
+            margin: auto;
+        }
+
+        /* ================= TRAVEL TYPES ================= */
+
+        .travel-type {
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 28px 15px;
+
+            text-align: center;
+
+            border: 1px solid #eeeeee;
+
+            height: 100%;
+
+            transition: 0.3s;
+        }
+
+        .travel-type:hover {
+            transform: translateY(-6px);
+
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .travel-type i {
+            font-size: 35px;
+
+            color: #ff6b2c;
+
+            margin-bottom: 15px;
+        }
+
+        .travel-type h5 {
+            font-weight: 600;
+        }
+
+        /* ================= FOOD ================= */
+
+        .food-card {
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 25px;
+
+            height: 100%;
+
+            border: 1px solid #eee;
+
+            transition: 0.3s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-5px);
+
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .food-icon {
+            font-size: 35px;
+
+            color: #ff6b2c;
+
+            margin-bottom: 15px;
+        }
+
+        .food-card h4 {
+            font-weight: 700;
+        }
+
+        /* ================= GALLERY ================= */
+
+        .gallery img {
+            width: 100%;
+
+            height: 250px;
+
+            object-fit: cover;
+
+            border-radius: 20px;
+
+            transition: 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.03);
+        }
+
+        /* ================= CTA ================= */
+
+        .cta {
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff6b2c,
+                    #ff914d
+                );
+
+            color: white;
+
+            padding: 75px 20px;
+
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 42px;
+
+            font-weight: 700;
+        }
+
+        .cta p {
+            max-width: 650px;
+
+            margin: 15px auto 30px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+
+            background: white;
+
+            color: #ff6b2c;
+
+            padding: 13px 30px;
+
+            border-radius: 30px;
+
+            text-decoration: none;
+
+            font-weight: 600;
+        }
+
+        .cta-btn:hover {
+            background: #f3f3f3;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #0f172a;
+
+            color: white;
+
+            padding: 30px;
+
+            text-align: center;
+        }
+
+        footer span {
+            color: #ff8a3d;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media(max-width: 768px) {
+
+            .section {
+                padding: 55px 5%;
+            }
+
+            .state-hero {
+                min-height: 500px;
+            }
+
+            .hero-content h1 {
+                font-size: 50px;
+            }
+
+            .hero-content p {
+                font-size: 16px;
+            }
+
+            .budget-section {
+                padding: 35px 20px;
+            }
+
+            .budget-value {
+                font-size: 35px;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="index.html">
+            Travel<span>Pal</span>
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMenu">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarMenu">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        href="index.html">
+
+                        Home
+
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="index.html#destinations">
+
+                        Explore India
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="index.html#planner">
+
+                        Trip Planner
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="state-hero">
+
+    <div class="hero-content">
+
+        <div class="hero-badge">
+            🇮🇳 Explore India
+        </div>
+
+
+        <h1 id="stateName">
+            Rajasthan
+        </h1>
+
+
+        <p id="stateDescription">
+
+            Discover beautiful destinations,
+            culture, food and unforgettable experiences.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     POPULAR DESTINATIONS
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-title">
+
+        <h2>
+            Popular Destinations
+        </h2>
+
+        <p>
+            Explore the most popular places in this state.
+        </p>
+
+    </div>
+
+
+    <div
+        class="row g-4"
+        id="destinationsContainer">
+
+        <!-- Destination cards will appear here -->
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     FOOD
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-title">
+
+        <h2>
+            Famous Food
+        </h2>
+
+        <p>
+            Taste the famous food of this state.
+        </p>
+
+    </div>
+
+
+    <div
+        class="row g-4"
+        id="foodContainer">
+
+        <!-- Food cards will appear here -->
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     BUDGET
+===================================================== -->
+
+<section class="section">
+
+    <div class="budget-section">
+
+        <h2>
+            Estimated Travel Budget
+        </h2>
+
+
+        <p>
+            Plan your trip according to your budget.
+        </p>
+
+
+        <div
+            class="budget-value"
+            id="budgetValue">
+
+            ₹13,000
+
+        </div>
+
+
+        <p class="budget-note">
+
+            This is an approximate starting budget.
+            Actual cost can vary depending on transport,
+            accommodation, food and duration.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TRAVEL TYPES
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-title">
+
+        <h2>
+            Perfect For
+        </h2>
+
+        <p>
+            Choose the experience you want.
+        </p>
+
+    </div>
+
+
+    <div
+        class="row g-4"
+        id="travelTypesContainer">
+
+        <!-- Travel types will appear here -->
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     TOURIST PLACES
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-title">
+
+        <h2>
+            Must Visit Places
+        </h2>
+
+        <p>
+            Places you should explore during your trip.
+        </p>
+
+    </div>
+
+
+    <div
+        class="row g-4"
+        id="placesContainer">
+
+        <!-- Places will appear here -->
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     MORE PLACES TO VISIT (loaded from the TravelPal API)
+===================================================== -->
+
+<section class="section" id="morePlacesSection" style="display:none">
+
+    <div class="section-title">
+
+        <h2>
+            More Places to Visit
+        </h2>
+
+        <p id="morePlacesInfo">
+            Top-rated places from our database.
+        </p>
+
+    </div>
+
+
+    <div
+        class="row g-4"
+        id="morePlacesContainer">
+    </div>
+
+
+    <div class="text-center mt-4">
+
+        <button
+            id="morePlacesButton"
+            class="btn btn-warning rounded-pill px-4 py-2 fw-semibold"
+            style="display:none"
+            onclick="loadMorePlaces()">
+            Show more
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PHOTO GALLERY
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-title">
+
+        <h2>
+            Explore Through Photos
+        </h2>
+
+        <p>
+            A glimpse of this beautiful state.
+        </p>
+
+    </div>
+
+
+    <div
+        class="row g-4 gallery"
+        id="galleryContainer">
+
+        <!-- Gallery photos appear here -->
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="cta">
+
+    <h2>
+        Ready to Explore?
+    </h2>
+
+
+    <p>
+
+        Plan your perfect trip with TravelPal
+        and discover amazing places across India.
+
+    </p>
+
+
+    <a
+        href="index.html"
+        class="cta-btn">
+
+        <i class="bi bi-arrow-left"></i>
+
+        Back to TravelPal
+
+    </a>
+
+</section>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <p class="mb-0">
+
+        © 2026
+
+        <span>
+            TravelPal
+        </span>
+
+        — Your AI Travel Planner for India
+
+    </p>
+
+</footer>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+/* =====================================================
+   LOAD THE STATE CHOSEN ON THE MAIN PAGE (index.html)
+   index.html -> showState() saves it in localStorage
+===================================================== */
+
+let stateData = null;
+
+try {
+    stateData = JSON.parse(
+        localStorage.getItem("selectedState")
+    );
+} catch (error) {
+    stateData = null;
+}
+
+// opened directly, nothing selected -> go back to the main page
+if (!stateData) {
+    window.location.replace("index.html");
+}
+
+
+function esc(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+function hideSection(containerId) {
+    const section =
+        document.getElementById(containerId)
+            .closest("section");
+    if (section) {
+        section.style.display = "none";
+    }
+}
+
+
+function renderState(stateData) {
+
+    const destinations = stateData.destinations || [];
+    const food         = stateData.food || [];
+    const travelTypes  = stateData.travelTypes || [];
+    const gallery      = stateData.gallery || [];
+
+    /* ---------- NAME / DESCRIPTION / TITLE ---------- */
+
+    document.title = "TravelPal | " + stateData.name;
+
+    document.getElementById("stateName").textContent =
+        stateData.name;
+
+    document.getElementById("stateDescription").textContent =
+        stateData.description || "";
+
+
+    /* ---------- HERO PHOTO ---------- */
+
+    if (stateData.image) {
+        document.querySelector(".state-hero").style.background =
+            "linear-gradient(rgba(0,0,0,0.40), rgba(0,0,0,0.60)), " +
+            "url(\"" + stateData.image + "\") center / cover";
+    } else {
+        document.querySelector(".state-hero").style.background =
+            "linear-gradient(135deg, #0f172a, #ff8a3d)";
+    }
+
+
+    /* ---------- BUDGET ---------- */
+
+    document.getElementById("budgetValue").textContent =
+        stateData.budget
+            ? "\u20B9" + Number(stateData.budget).toLocaleString("en-IN")
+            : "-";
+
+
+    /* ---------- DESTINATIONS ---------- */
+
+    const destinationsContainer =
+        document.getElementById("destinationsContainer");
+
+    destinations.forEach(destination => {
+
+        const placesHTML =
+            (destination.places || []).map(place => `
+                <li>
+                    <i class="bi bi-geo-alt-fill"></i>
+                    ${esc(place)}
+                </li>
+            `).join("");
+
+        const interestsHTML =
+            (destination.interests || []).map(interest => `
+                <span class="tag">${esc(interest)}</span>
+            `).join("");
+
+        destinationsContainer.innerHTML += `
+            <div class="col-lg-4 col-md-6">
+                <div class="destination-card">
+                    <div class="destination-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h3>${esc(destination.name)}</h3>
+                    <h6>Popular Places</h6>
+                    <ul class="place-list">${placesHTML}</ul>
+                    <h6>Interests</h6>
+                    <div>${interestsHTML}</div>
+                </div>
+            </div>
+        `;
+
+    });
+
+
+    /* ---------- FOOD (section hidden if no food data) ---------- */
+
+    const foodContainer =
+        document.getElementById("foodContainer");
+
+    if (food.length === 0) {
+        hideSection("foodContainer");
+    }
+
+    food.forEach(item => {
+
+        foodContainer.innerHTML += `
+            <div class="col-lg-3 col-md-6">
+                <div class="food-card">
+                    <div class="food-icon">
+                        <i class="bi bi-cup-hot-fill"></i>
+                    </div>
+                    <h4>${esc(item)}</h4>
+                    <p class="text-muted">Famous local food</p>
+                </div>
+            </div>
+        `;
+
+    });
+
+
+    /* ---------- TRAVEL TYPES ---------- */
+
+    const travelTypesContainer =
+        document.getElementById("travelTypesContainer");
+
+    const icons = {
+        History: "bi-bank",
+        Culture: "bi-people",
+        Food: "bi-cup-hot",
+        Adventure: "bi-compass",
+        Photography: "bi-camera",
+        Nature: "bi-tree",
+        Beaches: "bi-water",
+        Spiritual: "bi-flower1",
+        Relaxation: "bi-moon-stars",
+        Wildlife: "bi-binoculars"
+    };
+
+    if (travelTypes.length === 0) {
+        hideSection("travelTypesContainer");
+    }
+
+    travelTypes.forEach(type => {
+
+        travelTypesContainer.innerHTML += `
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="travel-type">
+                    <i class="bi ${icons[type] || "bi-star"}"></i>
+                    <h5>${esc(type)}</h5>
+                </div>
+            </div>
+        `;
+
+    });
+
+
+    /* ---------- ALL TOURIST PLACES ---------- */
+
+    const placesContainer =
+        document.getElementById("placesContainer");
+
+    const allPlaces = [];
+
+    destinations.forEach(destination => {
+        (destination.places || []).forEach(place => {
+            allPlaces.push(place);
+        });
+    });
+
+    allPlaces.forEach(place => {
+
+        placesContainer.innerHTML += `
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="destination-card text-center">
+                    <div class="destination-icon mx-auto">
+                        <i class="bi bi-camera-fill"></i>
+                    </div>
+                    <h5>${esc(place)}</h5>
+                </div>
+            </div>
+        `;
+
+    });
+
+
+    /* ---------- PHOTO GALLERY (hidden if no extra photos) ---------- */
+
+    const galleryContainer =
+        document.getElementById("galleryContainer");
+
+    if (gallery.length === 0) {
+        hideSection("galleryContainer");
+    }
+
+    gallery.forEach(src => {
+
+        galleryContainer.innerHTML += `
+            <div class="col-md-4">
+                <img src="${src}" alt="${esc(stateData.name)}">
+            </div>
+        `;
+
+    });
+
+}
+
+
+/* =====================================================
+   MORE PLACES FROM THE API
+   (needs the TravelPal API running on port 8000)
+===================================================== */
+
+const API_BASE = "http://localhost:8000";
+const MORE_PAGE_SIZE = 12;
+
+let moreOffset = 0;
+let moreTotal = 0;
+let moreLoading = false;
+
+
+function knownPlaceNames() {
+    const names = new Set();
+    ((stateData && stateData.destinations) || []).forEach(destination => {
+        (destination.places || []).forEach(place => {
+            names.add(String(place).trim().toLowerCase());
+        });
+    });
+    return names;
+}
+
+
+async function loadMorePlaces() {
+
+    if (!stateData || moreLoading) {
+        return;
+    }
+
+    moreLoading = true;
+
+    const section   = document.getElementById("morePlacesSection");
+    const container = document.getElementById("morePlacesContainer");
+    const button    = document.getElementById("morePlacesButton");
+    const info      = document.getElementById("morePlacesInfo");
+
+    button.disabled = true;
+    button.innerText = "Loading...";
+
+    try {
+
+        const url =
+            API_BASE + "/states/" +
+            encodeURIComponent(stateData.name) +
+            "/destinations?limit=" + MORE_PAGE_SIZE +
+            "&offset=" + moreOffset;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("API answered with status " + response.status);
+        }
+
+        const data = await response.json();
+        const known = knownPlaceNames();
+
+        moreTotal = data.total || 0;
+        moreOffset += (data.destinations || []).length;
+
+        (data.destinations || []).forEach(place => {
+
+            if (known.has(String(place.name).trim().toLowerCase())) {
+                return;
+            }
+
+            const fee    = Number(place.entrance_fee_inr) || 0;
+            const hours  = Number(place.time_needed_hrs) || 0;
+            const rating = Number(place.avg_rating) || 0;
+
+            const mapsLink =
+                "https://www.google.com/maps/search/?api=1&query=" +
+                encodeURIComponent(
+                    place.name + " " + place.city + " " + place.state
+                );
+
+            const card = document.createElement("div");
+            card.className = "col-lg-4 col-md-6";
+
+            card.innerHTML = `
+                <div class="destination-card">
+                    <div class="destination-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h3>${esc(place.name)}</h3>
+                    <p class="text-muted mb-2">${esc(place.city)}</p>
+                    <div class="mb-2">
+                        <span class="tag">${esc(place.type)}</span>
+                        <span class="tag">${esc(place.significance)}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small>Rating</small>
+                        <strong>${rating.toFixed(1)} &#9733;</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small>Entrance fee</small>
+                        <strong>${fee === 0 ? "Free" : "&#8377;" + fee.toLocaleString("en-IN")}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small>Time needed</small>
+                        <strong>${hours} hr</strong>
+                    </div>
+                    <a
+                        class="btn btn-outline-dark btn-sm w-100 mt-3"
+                        href="${mapsLink}"
+                        target="_blank"
+                        rel="noopener">
+                        View on map
+                    </a>
+                </div>
+            `;
+
+            container.appendChild(card);
+
+        });
+
+        if (moreTotal > 0) {
+            section.style.display = "block";
+            info.innerText =
+                "Showing " + Math.min(moreOffset, moreTotal) +
+                " of " + moreTotal + " places in " + stateData.name + ".";
+        }
+
+        button.style.display =
+            moreOffset < moreTotal ? "inline-block" : "none";
+
+    } catch (error) {
+
+        console.warn("More places not loaded:", error);
+
+        if (moreOffset === 0) {
+            section.style.display = "none";
+        } else {
+            info.innerText =
+                "Could not load more places. Is the TravelPal API running?";
+        }
+
+    } finally {
+
+        button.disabled = false;
+        button.innerText = "Show more";
+        moreLoading = false;
+
+    }
+
+}
+
+
+if (stateData) {
+    renderState(stateData);
+}
+
+if (stateData) {
+    loadMorePlaces();
+}
+
+</script>
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html> 

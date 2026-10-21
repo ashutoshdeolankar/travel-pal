@@ -230,3 +230,49 @@ def get_recommendations(prefs: PreferenceRequest) -> RecommendationResponse:
 @app.get("/destinations/{destination_id}")
 def get_destination(destination_id: int) -> dict:
     return {"id": destination_id, "name": "TODO: fetch from database"}
+
+
+@app.get("/states/{state_name}/destinations")
+def get_state_destinations(state_name: str, limit: int = 12, offset: int = 0) -> dict:
+    """Places to visit in one state, most popular first (used by Explore India)."""
+    from sqlalchemy import text
+
+    from src.db.connection import engine
+
+    limit = max(1, min(limit, 50))
+    offset = max(0, offset)
+    params = {"state": state_name, "limit": limit, "offset": offset}
+
+    with engine.connect() as conn:
+        total = conn.execute(
+            text(
+                "SELECT COUNT(*) FROM destinations "
+                "WHERE lower(replace(state, '&', 'and')) "
+                "= lower(replace(:state, '&', 'and'))"
+            ),
+            params,
+        ).scalar()
+
+        rows = (
+            conn.execute(
+                text(
+                    "SELECT destination_id, name, city, state, type, significance, "
+                    "avg_rating, entrance_fee_inr, time_needed_hrs, category "
+                    "FROM destinations "
+                    "WHERE lower(replace(state, '&', 'and')) "
+                    "= lower(replace(:state, '&', 'and')) "
+                    "ORDER BY COALESCE(avg_rating, 0) "
+                    "* ln(1 + COALESCE(num_reviews, 0)) DESC, destination_id "
+                    "LIMIT :limit OFFSET :offset"
+                ),
+                params,
+            )
+            .mappings()
+            .all()
+        )
+
+    return {
+        "state": state_name,
+        "total": int(total or 0),
+        "destinations": [dict(row) for row in rows],
+    }
