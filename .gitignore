@@ -38,3 +38,4 @@ mlartifacts/
 # Docker
 *.log
 mlflow.db
+docker/.env

@@ -9,6 +9,8 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://travelpal:travelpal@db:5432/travelpal
+      - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY:-}
+      - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY:-}
     volumes:
       - ../src:/app/src
       - ../data:/app/data
