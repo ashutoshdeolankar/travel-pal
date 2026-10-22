@@ -1,5 +1,5 @@
 """
-Travel Pal API.
+Vishwaara API.
 
 Run locally with:
     uvicorn src.api.main:app --reload
@@ -27,7 +27,7 @@ logging.basicConfig(
 logger = logging.getLogger("travelpal")
 
 app = FastAPI(
-    title="Travel Pal API",
+    title="Vishwaara API",
     description="Personalized travel, food, and accommodation recommendations.",
     version="0.5.0",
 )
@@ -276,3 +276,6 @@ def get_state_destinations(state_name: str, limit: int = 12, offset: int = 0) ->
         "total": int(total or 0),
         "destinations": [dict(row) for row in rows],
     }
+from src.api.accounts import router as accounts_router
+
+app.include_router(accounts_router)

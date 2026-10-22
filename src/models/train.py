@@ -1,5 +1,5 @@
 """
-Travel Pal - Phase 3/4 (v2): train the content-based recommendation model.
+Vishwaara - Phase 3/4 (v2): train the content-based recommendation model.
 Updated for the larger combined dataset - numeric feature renamed from
 num_reviews_lakhs to num_reviews (a real review count now, not a proxy).
 """

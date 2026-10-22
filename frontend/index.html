@@ -11,7 +11,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>TravelPal | AI Travel Planner for India</title>
+    <title>Vishwaara | AI Travel Planner for India</title>
 
     <!-- Bootstrap -->
     <link
@@ -159,7 +159,7 @@
 
         }
 
-        /* ABOUT TRAVEL PAL - soft blue and white background */
+        /* ABOUT VISHWAARA - soft blue and white background */
 
         #about {
 
@@ -904,6 +904,21 @@
 
         }
 
+        .fav-btn {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            background: white;
+            color: #b03a2e;
+            border-radius: 30px;
+            padding: 9px;
+            font-weight: 600;
+        }
+
+        .fav-btn:hover {
+            background: #fdf2f0;
+        }
+
         .result-card {
 
             background: white;
@@ -1037,6 +1052,45 @@
         /* =====================================================
            ITINERARY
         ===================================================== */
+
+
+        .itin-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0;
+        }
+
+        .itin-list li {
+            display: flex;
+            gap: 14px;
+            padding: 9px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .itin-time {
+            min-width: 128px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .itin-meta {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .itin-foot {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .itin-summary {
+            border-radius: 18px;
+            padding: 20px 25px;
+            background: #f4f7f6;
+            margin-bottom: 15px;
+        }
 
         .itinerary-card {
 
@@ -1242,7 +1296,7 @@
 
             <i class="bi bi-compass"></i>
 
-            Travel<span>Pal</span>
+            Vishwa<span>ara</span>
 
         </a>
 
@@ -1310,6 +1364,10 @@
                     </a>
                 </li>
 
+                <li class="nav-item" id="navAuth">
+                    <a class="nav-link" href="login.html">Login</a>
+                </li>
+
             </ul>
 
         </div>
@@ -1366,7 +1424,7 @@
 
                 <p>
 
-                    TravelPal creates personalized travel
+                    Vishwaara creates personalized travel
                     plans based on your budget, interests,
                     food preferences, travel style and available
                     time.
@@ -1486,7 +1544,7 @@
             </h2>
 
             <p>
-                TravelPal considers multiple factors
+                Vishwaara considers multiple factors
                 before creating your travel plan.
             </p>
 
@@ -1713,6 +1771,28 @@
                         class="form-control"
                         placeholder="Example: 15000"
                     >
+
+                </div>
+
+
+                <!-- DESTINATION -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Where do you want to go?
+                    </label>
+
+                    <select
+                        id="destinationState"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Anywhere in India (let Vishwaara suggest)
+                        </option>
+
+                    </select>
 
                 </div>
 
@@ -2161,7 +2241,7 @@
 
             <div class="section-title">
 
-                <small>DEMO ITINERARY</small>
+                <small>YOUR DAY-BY-DAY PLAN</small>
 
                 <h2>
                     Suggested itinerary
@@ -2191,14 +2271,14 @@
 
         <div class="section-title">
 
-            <small>ABOUT TRAVEL PAL</small>
+            <small>ABOUT VISHWAARA</small>
 
             <h2>
                 More than an itinerary generator.
             </h2>
 
             <p>
-                TravelPal is designed as an intelligent
+                Vishwaara is designed as an intelligent
                 travel recommendation and trip optimization
                 platform for India.
             </p>
@@ -2293,7 +2373,7 @@
 
                     <i class="bi bi-compass"></i>
 
-                    TravelPal
+                    Vishwaara
 
                 </h4>
 
@@ -2342,7 +2422,7 @@
         <div class="footer-bottom">
 
             <span>
-                © 2026 TravelPal
+                © 2026 Vishwaara
             </span>
 
             <span>
@@ -2360,6 +2440,7 @@
      JAVASCRIPT
 ===================================================== -->
 
+<script src="auth.js"></script>
 <script>
 
 
@@ -3635,6 +3716,9 @@ function showState(code) {
     }
 
     // Save state data to localStorage for state.html to read
+    // Give the state page its hero photo (same picture as the Explore India card)
+    state.image = stateImages[state.name] || '';
+
     localStorage.setItem('selectedState', JSON.stringify(state));
 
     // Redirect to state.html
@@ -3661,6 +3745,7 @@ function toggleInterest(button) {
 /* ---- API connection (FastAPI from docker compose) ---- */
 
 const API_URL = "http://localhost:8000/recommendations";
+const API_BASE = API_URL.replace(/\/recommendations$/, "");
 
 /* The page's interest buttons -> words the model understands */
 const INTEREST_TO_API = {
@@ -3695,12 +3780,478 @@ function esc(value) {
         .replace(/"/g, "&quot;");
 }
 
+/* =====================================================
+   PLAN FOR A CHOSEN DESTINATION (state)
+   Uses GET /states/{state}/destinations, then keeps the
+   spots that fit the budget and the chosen interests.
+===================================================== */
+
+const DESTINATION_FEE_CAPS = { low: 20, mid: 50, high: Infinity };
+
+/* words searched in a place's type + significance */
+const INTEREST_KEYWORDS = {
+    "Temple":     ["temple", "religious", "church", "mosque", "gurudwara", "shrine"],
+    "Historical": ["historical", "fort", "palace", "museum", "monument"],
+    "Natural":    ["natural", "park", "lake", "waterfall", "garden", "hill"],
+    "Beach":      ["beach"],
+    "Adventure":  ["adventure", "recreational"],
+    "Wildlife":   ["wildlife", "national park", "sanctuary", "zoo"]
+};
+
+function spotMatchesInterests(place, apiInterests) {
+    if (apiInterests.length === 0) { return true; }
+    const text = ((place.type || "") + " " + (place.significance || "")).toLowerCase();
+    return apiInterests.some(word =>
+        (INTEREST_KEYWORDS[word] || [word.toLowerCase()])
+            .some(keyword => text.includes(keyword))
+    );
+}
+
+async function getSpotsForDestination(stateName, budget, duration, apiInterests) {
+
+    const response = await fetch(
+        API_BASE + "/states/" + encodeURIComponent(stateName) +
+        "/destinations?limit=50"
+    );
+
+    if (response.status === 429) {
+        alert("Too many requests. Please wait a minute and try again.");
+        return null;
+    }
+
+    if (!response.ok) {
+        throw new Error("API answered with status " + response.status);
+    }
+
+    const data = await response.json();
+    const all  = data.destinations || [];
+
+    const feeCap = DESTINATION_FEE_CAPS[budgetBand(budget)];
+    const wanted = Math.min(duration * 3, 24);
+
+    const affordable = all.filter(place =>
+        (Number(place.entrance_fee_inr) || 0) <= feeCap
+    );
+
+    const matched = affordable.filter(place =>
+        spotMatchesInterests(place, apiInterests)
+    );
+
+    /* if too few match, top up with other affordable popular places */
+    const chosen = matched.slice(0, wanted);
+    affordable.forEach(place => {
+        if (chosen.length < Math.min(wanted, 4) && !chosen.includes(place)) {
+            chosen.push(place);
+        }
+    });
+
+    return chosen;
+}
+
+/* one card per day, about two spots a day */
+function spotsPerDay(places, duration) {
+    const days = [];
+    places.forEach((place, index) => {
+        const day = index % duration;
+        days[day] = days[day] || [];
+        days[day].push(esc(place.name));
+    });
+    return days.filter(Boolean).map(list => list.join(" + "));
+}
+
+function showPlansLink(stateName) {
+
+    let box = document.getElementById("destinationPlansLink");
+    if (!box) {
+        box = document.createElement("div");
+        box.id = "destinationPlansLink";
+        box.className = "text-center mt-4";
+        document.getElementById("recommendationContainer")
+            .insertAdjacentElement("afterend", box);
+    }
+
+    box.innerHTML = "";
+
+    if (!stateName) { return; }
+
+    const state = indiaData.find(item => item.name === stateName);
+    if (!state) { return; }
+
+    box.innerHTML =
+        '<p class="text-muted mb-2">Entrance fees and visit times are estimates.</p>' +
+        '<button class="btn-main" onclick="showState(\'' + esc(state.code) + '\')">' +
+        'See ready-made ' + esc(stateName) + ' plans' +
+        '</button>';
+}
+
+function fillDestinationList() {
+    const select = document.getElementById("destinationState");
+    if (!select) { return; }
+    indiaData
+        .map(state => state.name)
+        .sort((a, b) => a.localeCompare(b))
+        .forEach(name => {
+            const option = document.createElement("option");
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+        });
+}
+
+document.addEventListener("DOMContentLoaded", fillDestinationList);
+
+
+/* =====================================================
+   ACCOUNT FEATURES: favourites, save trip, home city
+===================================================== */
+
+let lastTrip = null;        /* the trip just generated */
+let lastItinerary = null;   /* its day-by-day plan */
+const favouriteIds = {};    /* "name|city" -> id of a saved favourite */
+
+function favouriteKey(item) {
+    return (item.name || "") + "|" + (item.city || "");
+}
+
+async function loadFavourites() {
+    if (!TravelPalAuth.isLoggedIn()) { return; }
+    try {
+        const data = await TravelPalAuth.request("GET", "/favourites");
+        data.favourites.forEach(item => {
+            favouriteIds[item.place_name + "|" + item.city] = item.id;
+        });
+    } catch (error) {
+        /* favourites just show as not saved */
+    }
+}
+
+function attachFavouriteButton(card, item) {
+
+    const button = card.querySelector(".fav-btn");
+    if (!button) { return; }
+
+    const paint = () => {
+        button.innerHTML = favouriteKey(item) in favouriteIds
+            ? '<i class="bi bi-heart-fill"></i> Saved to favourites'
+            : '<i class="bi bi-heart"></i> Save to favourites';
+    };
+
+    paint();
+
+    button.addEventListener("click", async () => {
+
+        if (!TravelPalAuth.isLoggedIn()) {
+            window.location.href = "login.html?next=index.html";
+            return;
+        }
+
+        button.disabled = true;
+        const key = favouriteKey(item);
+
+        try {
+            if (key in favouriteIds) {
+                await TravelPalAuth.request("DELETE", "/favourites/" + favouriteIds[key]);
+                delete favouriteIds[key];
+            } else {
+                const data = await TravelPalAuth.request("POST", "/favourites", {
+                    place_name: String(item.name || "").slice(0, 200),
+                    city: String(item.city || "").slice(0, 100),
+                    state: item.state ? String(item.state).slice(0, 100) : null,
+                    place_type: item.type ? String(item.type).slice(0, 100) : null,
+                    entrance_fee_inr: Math.round(Number(item.entrance_fee_inr) || 0),
+                    avg_rating: Number(item.avg_rating) || null
+                });
+                favouriteIds[key] = data.favourite.id;
+            }
+            paint();
+        } catch (error) {
+            button.textContent = "Could not save. Try again.";
+            setTimeout(paint, 2500);
+        } finally {
+            button.disabled = false;
+        }
+    });
+}
+
+function showSaveTripBar() {
+
+    let bar = document.getElementById("saveTripBar");
+    if (!bar) {
+        bar = document.createElement("div");
+        bar.id = "saveTripBar";
+        bar.className = "text-center mt-3";
+        document.getElementById("itineraryContainer")
+            .insertAdjacentElement("afterend", bar);
+    }
+
+    bar.innerHTML = "";
+
+    if (!lastTrip || !lastItinerary) { return; }
+
+    if (TravelPalAuth.isLoggedIn()) {
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn-main";
+        button.innerHTML = '<i class="bi bi-bookmark-heart"></i> Save this trip';
+        button.addEventListener("click", () => saveCurrentTrip(button, bar));
+        bar.appendChild(button);
+
+    } else {
+
+        const link = document.createElement("a");
+        link.className = "btn-main d-inline-block text-decoration-none";
+        link.href = "login.html?next=index.html";
+        link.textContent = "Log in to save this trip";
+        bar.appendChild(link);
+
+        const note = document.createElement("p");
+        note.className = "text-muted mt-2 mb-0";
+        note.textContent = "You will come back here and can generate the trip again.";
+        bar.appendChild(note);
+    }
+}
+
+async function saveCurrentTrip(button, bar) {
+
+    if (!lastTrip || !lastItinerary) { return; }
+
+    button.disabled = true;
+
+    try {
+        await TravelPalAuth.request("POST", "/trips", {
+            title: lastTrip.title,
+            destination: lastTrip.destination,
+            duration_days: lastTrip.duration,
+            budget: Math.round(lastTrip.budget),
+            plan: {
+                startCity: lastTrip.startCity,
+                travellers: lastTrip.travellers,
+                interests: lastTrip.interests,
+                spots: lastTrip.spots,
+                days: lastItinerary.days,
+                tripFees: lastItinerary.tripFees
+            }
+        });
+
+        bar.innerHTML = "";
+        const done = document.createElement("p");
+        done.className = "mb-0";
+        done.innerHTML = '<strong>Trip saved.</strong> ';
+        const link = document.createElement("a");
+        link.href = "my-trips.html";
+        link.textContent = "View it in My Trips";
+        done.appendChild(link);
+        bar.appendChild(done);
+
+    } catch (error) {
+        button.disabled = false;
+        let problem = bar.querySelector(".save-problem");
+        if (!problem) {
+            problem = document.createElement("p");
+            problem.className = "save-problem text-danger mt-2 mb-0";
+            bar.appendChild(problem);
+        }
+        problem.textContent = error.message;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const current = TravelPalAuth.user();
+    const cityInput = document.getElementById("startCity");
+    if (current && current.home_city && cityInput && !cityInput.value) {
+        cityInput.value = current.home_city;
+    }
+    loadFavourites();
+});
+
+
+/* =====================================================
+   PROPER DAY-BY-DAY ITINERARY
+   Fits the chosen spots into each day (time windows,
+   lunch break, travel buffer) and adds fee totals.
+   Fees and visit times are estimates.
+===================================================== */
+
+function clock(hours) {
+    let h = Math.floor(hours);
+    let m = Math.round((hours - h) * 60);
+    if (m === 60) { h += 1; m = 0; }
+    const suffix = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ":" + String(m).padStart(2, "0") + " " + suffix;
+}
+
+function rupees(amount) {
+    return amount === 0 ? "Free" : "\u20B9" + amount.toLocaleString("en-IN");
+}
+
+function buildItinerary(places, duration, startCity, destination) {
+
+    const container = document.getElementById("itineraryContainer");
+    container.innerHTML = "";
+    lastItinerary = null;
+
+    if (!places || places.length === 0) { return; }
+
+    /* keep spots of the same city together so a day stays in one area */
+    const cityOrder = [];
+    places.forEach(place => {
+        if (!cityOrder.includes(place.city)) { cityOrder.push(place.city); }
+    });
+    const queue = [...places].sort(
+        (a, b) => cityOrder.indexOf(a.city) - cityOrder.indexOf(b.city)
+    );
+
+    const windowFor = day => {
+        if (duration === 1) { return { start: 9, end: 18 }; }
+        if (day === 1)      { return { start: 14, end: 18.5 }; }
+        if (day === duration) { return { start: 9, end: 14 }; }
+        return { start: 9, end: 18 };
+    };
+
+    const days = [];
+
+    for (let day = 1; day <= duration; day++) {
+
+        const win = windowFor(day);
+        let time = win.start;
+        let lunchDone = day === 1 && duration > 1;
+        const stops = [];
+
+        while (queue.length > 0) {
+
+            const spot  = queue[0];
+            const hours = Math.max(0.5, Number(spot.time_needed_hrs) || 1.5);
+
+            if (stops.length > 0 && time + hours > win.end) { break; }
+
+            stops.push({ type: "spot", start: time, end: time + hours, spot: spot });
+            time += hours + 0.5;
+            queue.shift();
+
+            if (!lunchDone && time >= 12.5 && win.end > 14) {
+                stops.push({ type: "lunch", start: time, end: time + 1 });
+                time += 1;
+                lunchDone = true;
+            }
+        }
+
+        days.push(stops);
+    }
+
+    let tripTotal = 0;
+    const daysData = [];
+
+    days.forEach((stops, index) => {
+
+        const day = index + 1;
+        const spots = stops.filter(stop => stop.type === "spot").map(stop => stop.spot);
+        const cities = [];
+        spots.forEach(spot => {
+            if (!cities.includes(spot.city)) { cities.push(spot.city); }
+        });
+
+        const firstCity = cities[0] || destination || "your destination";
+        let title;
+        if (duration > 1 && day === 1)             { title = "Arrive in " + firstCity; }
+        else if (duration > 1 && day === duration) { title = "Last day and departure"; }
+        else if (cities.length > 0)                { title = cities.join(" and ") + " sightseeing"; }
+        else                                       { title = "Relaxed day"; }
+
+        const rows = [];
+
+        if (duration > 1 && day === 1) {
+            rows.push(["Morning", "Travel from " + esc(startCity) + " to " + esc(firstCity) +
+                " (time depends on how you travel). Check in and rest."]);
+        }
+
+        stops.forEach(stop => {
+            if (stop.type === "lunch") {
+                rows.push([clock(stop.start) + " - " + clock(stop.end), "Lunch break. Try the local food."]);
+            } else {
+                const spot = stop.spot;
+                const fee = Number(spot.entrance_fee_inr) || 0;
+                rows.push([
+                    clock(stop.start) + " - " + clock(stop.end),
+                    "<strong>" + esc(spot.name) + "</strong>" +
+                    ' <span class="itin-meta">(' + esc(spot.type) + ", " + rupees(fee) + ")</span>"
+                ]);
+            }
+        });
+
+        if (spots.length === 0) {
+            rows.push(["All day", "Free day. Rest, shop or revisit your favourite spot."]);
+        }
+
+        if (day < duration || duration === 1) {
+            rows.push(["Evening", "Dinner and a relaxed walk in " + esc(cities[cities.length - 1] || firstCity) + "."]);
+        } else {
+            rows.push(["Afternoon", "Check out and head back to " + esc(startCity) + "."]);
+        }
+
+        const dayFees = spots.reduce((sum, spot) => sum + (Number(spot.entrance_fee_inr) || 0), 0);
+        tripTotal += dayFees;
+
+        const plainRows = rows.map(row => {
+            const holder = document.createElement("div");
+            holder.innerHTML = row[1];
+            return { time: row[0], text: holder.textContent };
+        });
+        daysData.push({
+            day: day,
+            title: title,
+            rows: plainRows,
+            fees: dayFees,
+            stay: day < duration ? (cities[cities.length - 1] || firstCity) : ""
+        });
+
+        const stay = day < duration
+            ? " &middot; Stay: " + esc(cities[cities.length - 1] || firstCity)
+            : "";
+
+        const card = document.createElement("div");
+        card.className = "itinerary-card";
+        card.innerHTML = `
+            <div class="d-flex gap-3">
+                <div class="day-number">${day}</div>
+                <div class="w-100">
+                    <h5 class="fw-bold">Day ${day}: ${esc(title)}</h5>
+                    <ul class="itin-list">
+                        ${rows.map(row =>
+                            '<li><span class="itin-time">' + row[0] + "</span><span>" + row[1] + "</span></li>"
+                        ).join("")}
+                    </ul>
+                    <p class="itin-foot mb-0">
+                        Entrance fees today: <strong>${rupees(dayFees)}</strong>${stay}
+                    </p>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    const summary = document.createElement("div");
+    summary.className = "itin-summary";
+    summary.innerHTML =
+        "<strong>Entrance fees for the whole trip: " + rupees(tripTotal) + " per person.</strong><br>" +
+        '<span class="itin-meta">Fees and visit times are estimates. Stay, food and travel are not included.</span>' +
+        (queue.length > 0
+            ? '<br><span class="itin-meta">More spots if you have time: ' +
+              queue.map(spot => esc(spot.name)).join(", ") + ".</span>"
+            : "");
+    container.appendChild(summary);
+    lastItinerary = { days: daysData, tripFees: tripTotal };
+}
+
+
 async function generateTrip() {
 
     const startCity  = document.getElementById("startCity").value.trim();
     const budget     = Number(document.getElementById("budget").value);
     const duration   = Number(document.getElementById("duration").value);
     const travellers = Number(document.getElementById("travellers").value);
+    const destination = document.getElementById("destinationState").value;
 
     if (!startCity || !budget) {
         alert("Please enter your starting city and budget.");
@@ -3728,43 +4279,93 @@ async function generateTrip() {
 
     try {
 
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                budget: budgetBand(budget),
-                duration_days: duration,
-                interests: apiInterests,
-                top_n: 6,
-                category: "all"
-            })
-        });
+        let places;
 
-        if (response.status === 429) {
-            alert("Too many requests. Please wait a minute and try again.");
-            return;
+        if (destination) {
+
+            places = await getSpotsForDestination(
+                destination, budget, duration, apiInterests
+            );
+
+            if (places === null) { return; }
+
+        } else {
+
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    budget: budgetBand(budget),
+                    duration_days: duration,
+                    interests: apiInterests,
+                    top_n: 6,
+                    category: "all"
+                })
+            });
+
+            if (response.status === 429) {
+                alert("Too many requests. Please wait a minute and try again.");
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("API answered with status " + response.status);
+            }
+
+            const data = await response.json();
+            places = data.recommendations || [];
+
         }
 
-        if (!response.ok) {
-            throw new Error("API answered with status " + response.status);
+        const shown = places.slice(0, 12);
+
+        displayRecommendations(shown, startCity, budget, duration, travellers);
+
+        if (destination) {
+            document.getElementById("resultDescription").innerText =
+                `Spots to visit in ${destination} on a ${duration}-day trip from ` +
+                `${startCity}, for ${travellers} traveller(s) with a budget of ` +
+                `\u20B9${budget.toLocaleString("en-IN")} per person.`;
+
+            if (shown.length === 0) {
+                document.getElementById("recommendationContainer").innerHTML =
+                    '<p class="text-center text-muted">' +
+                    'No places found for this state with these choices. ' +
+                    'Try different interests or a higher budget.' +
+                    '</p>';
+            }
         }
 
-        const data = await response.json();
-        const places = data.recommendations || [];
-
-        displayRecommendations(places, startCity, budget, duration, travellers);
+        showPlansLink(destination);
 
         /* The reality score and itinerary expect this shape */
-        const shaped = places.map(place => ({
+        const shaped = shown.map(place => ({
             budget: Number(place.entrance_fee_inr) || 0
         }));
 
         calculateRealityScore(budget, duration, travellers, shaped);
 
-        createItinerary(
-            { places: places.map(place => esc(place.name)) },
-            duration
-        );
+        buildItinerary(places, duration, startCity, destination);
+
+        lastTrip = {
+            title: (destination || "India") + " trip, " + duration + " days",
+            destination: destination || null,
+            duration: duration,
+            budget: budget,
+            startCity: startCity,
+            travellers: travellers,
+            interests: selectedInterests,
+            spots: shown.map(spot => ({
+                name: spot.name,
+                city: spot.city,
+                state: spot.state,
+                type: spot.type,
+                fee: Number(spot.entrance_fee_inr) || 0,
+                hours: Number(spot.time_needed_hrs) || 0,
+                rating: Number(spot.avg_rating) || 0
+            }))
+        };
+        showSaveTripBar();
 
         const results = document.getElementById("resultsSection");
         results.style.display = "block";
@@ -3772,10 +4373,10 @@ async function generateTrip() {
 
     } catch (error) {
 
-        console.error("TravelPal API error:", error);
+        console.error("Vishwaara API error:", error);
 
         alert(
-            "Could not reach the TravelPal server.\n\n" +
+            "Could not reach the Vishwaara server.\n\n" +
             "Make sure Docker is running (docker compose up -d) " +
             "and the API is open at http://localhost:8000/health"
         );
@@ -3884,11 +4485,14 @@ function displayRecommendations(
                     <i class="bi bi-arrow-right"></i>
                 </a>
 
+                <button type="button" class="fav-btn"></button>
+
             </div>
 
         `;
 
         container.appendChild(card);
+        attachFavouriteButton(card, item);
 
     });
 

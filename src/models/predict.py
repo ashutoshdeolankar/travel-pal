@@ -1,5 +1,5 @@
 """
-Travel Pal - Phase 3/6: inference.
+Vishwaara - Phase 3/6: inference.
 
 Loads the trained model artifact and scores destinations against a
 user's stated preferences. This is what the API (Phase 5) calls.

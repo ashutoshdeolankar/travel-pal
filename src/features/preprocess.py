@@ -1,7 +1,7 @@
 """
-Travel Pal — Phase 2 (v2): cleaning & preprocessing for the combined dataset.
+Vishwaara — Phase 2 (v2): cleaning & preprocessing for the combined dataset.
 
-Takes the large raw TravelPal_Combined_India_Dataset.csv (~15k rows) and
+Takes the large raw Vishwaara_Combined_India_Dataset.csv (~15k rows) and
 produces a clean, deduplicated, model-ready destinations table, plus the
 existing accommodations cleaning (unchanged from Phase 1/2).
 

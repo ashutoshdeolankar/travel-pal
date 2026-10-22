@@ -1,5 +1,5 @@
 """
-Travel Pal — Phase 6: database connection.
+Vishwaara — Phase 6: database connection.
 
 Reads the connection string from the DATABASE_URL environment
 variable (loaded from a local .env file — never commit that file,

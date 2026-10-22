@@ -1,6 +1,6 @@
-# Travel Pal – Data
+# Vishwaara – Data
 
-This folder holds the data used by Travel Pal. The raw files are **not stored in git**
+This folder holds the data used by Vishwaara. The raw files are **not stored in git**
 (they are large and listed in `.gitignore`), so you must download them once and put them
 in `data/raw/` before running the pipeline.
 

@@ -1,5 +1,5 @@
 """
-Travel Pal - Phase 6: load cleaned data into Postgres.
+Vishwaara - Phase 6: load cleaned data into Postgres.
 
 Run with:
     python -m src.db.load_to_db

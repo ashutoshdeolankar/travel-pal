@@ -1,7 +1,7 @@
 """
-Travel Pal — Phase 1 (v2): data loading.
+Vishwaara — Phase 1 (v2): data loading.
 
-Destinations now come from TravelPal_Combined_India_Dataset.csv — a
+Destinations now come from Vishwaara_Combined_India_Dataset.csv — a
 much larger real dataset (~15k rows scraped from Google Maps listings)
 covering places, ratings, real review counts, categories, tags, and
 descriptions across India. Place it at:

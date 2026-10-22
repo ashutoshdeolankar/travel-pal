@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishwaara | My Trips</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --primary: #0d3b36;
+            --primary-light: #17584f;
+            --accent: #e58f3f;
+            --dark: #172321;
+            --text: #596663;
+            --border: #e4e9e6;
+        }
+
+        body {
+            background: #f7f8f6;
+            color: var(--dark);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .topbar {
+            background: var(--primary);
+            padding: 14px 0;
+        }
+
+        .topbar a { color: white; text-decoration: none; }
+        .topbar .brand { font-weight: 700; font-size: 22px; }
+        .topbar .brand span { color: var(--accent); }
+
+        h2.section-heading { font-weight: 700; font-size: 26px; margin: 40px 0 18px; }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .btn-main {
+            border: 0;
+            border-radius: 30px;
+            padding: 10px 24px;
+            font-weight: 600;
+            color: white;
+            background: var(--primary);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-main:hover { background: var(--primary-light); color: white; }
+
+        .btn-small {
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #922b21;
+        }
+
+        .meta { color: var(--text); font-size: 14px; }
+
+        .day-block { padding: 10px 0; border-bottom: 1px solid #f1f1f1; }
+        .day-block:last-child { border-bottom: 0; }
+        .day-row { display: flex; gap: 12px; padding: 3px 0; font-size: 14px; }
+        .day-time { min-width: 128px; font-weight: 600; color: var(--primary); }
+
+        summary { cursor: pointer; font-weight: 600; color: var(--primary); }
+
+        #status { display: none; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; }
+        #status.ok { display: block; background: #e6f4ea; color: #1e6b34; }
+        #status.error { display: block; background: #fdecea; color: #922b21; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="brand" href="index.html"><i class="bi bi-compass"></i> Vishwa<span>ara</span></a>
+        <div>
+            <a class="me-3" href="index.html#planner">Plan a trip</a>
+            <a href="#" id="logoutLink">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <div id="status"></div>
+
+    <!-- PROFILE -->
+    <h2 class="section-heading">My profile</h2>
+    <div class="panel">
+        <form id="profileForm" class="row g-3" novalidate>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold" for="profileName">Name</label>
+                <input class="form-control" id="profileName" maxlength="100" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold" for="profileEmail">Email</label>
+                <input class="form-control" id="profileEmail" disabled>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold" for="profileCity">Home city</label>
+                <input class="form-control" id="profileCity" maxlength="100" placeholder="Example: Pune">
+            </div>
+            <div class="col-12">
+                <button class="btn-main" type="submit">Save profile</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TRIPS -->
+    <h2 class="section-heading">My saved trips</h2>
+    <div id="tripsContainer"></div>
+
+    <!-- FAVOURITES -->
+    <h2 class="section-heading">My favourite places</h2>
+    <div class="row g-3" id="favouritesContainer"></div>
+
+</div>
+
+<script src="auth.js"></script>
+<script>
+
+const statusBox = document.getElementById("status");
+
+function say(text, kind) {
+    statusBox.textContent = text;
+    statusBox.className = kind;
+}
+
+function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) { node.className = className; }
+    if (text !== undefined) { node.textContent = text; }
+    return node;
+}
+
+function rupees(amount) {
+    return Number(amount) === 0 ? "Free" : "₹" + Number(amount).toLocaleString("en-IN");
+}
+
+/* ---------- profile ---------- */
+
+function fillProfile() {
+    const user = TravelPalAuth.user() || {};
+    document.getElementById("profileName").value = user.name || "";
+    document.getElementById("profileEmail").value = user.email || "";
+    document.getElementById("profileCity").value = user.home_city || "";
+}
+
+document.getElementById("profileForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    try {
+        const data = await TravelPalAuth.request("PUT", "/auth/me", {
+            name: document.getElementById("profileName").value.trim(),
+            home_city: document.getElementById("profileCity").value.trim()
+        });
+        TravelPalAuth.saveUser(data.user);
+        TravelPalAuth.updateNav();
+        say("Profile saved.", "ok");
+    } catch (error) {
+        say(error.message, "error");
+    }
+});
+
+document.getElementById("logoutLink").addEventListener("click", async event => {
+    event.preventDefault();
+    await TravelPalAuth.logout();
+    window.location.href = "index.html";
+});
+
+/* ---------- trips ---------- */
+
+function renderDays(days) {
+    const wrap = el("div", "mt-3");
+    (days || []).forEach(day => {
+        const block = el("div", "day-block");
+        block.appendChild(el("div", "fw-bold", "Day " + day.day + ": " + day.title));
+        (day.rows || []).forEach(row => {
+            const line = el("div", "day-row");
+            line.appendChild(el("span", "day-time", row.time));
+            line.appendChild(el("span", "", row.text));
+            block.appendChild(line);
+        });
+        block.appendChild(el("div", "meta mt-1",
+            "Entrance fees: " + rupees(day.fees) + (day.stay ? " · Stay: " + day.stay : "")));
+        wrap.appendChild(block);
+    });
+    return wrap;
+}
+
+async function removeTrip(id) {
+    if (!window.confirm("Delete this saved trip?")) { return; }
+    try {
+        await TravelPalAuth.request("DELETE", "/trips/" + id);
+        say("Trip deleted.", "ok");
+        loadTrips();
+    } catch (error) {
+        say(error.message, "error");
+    }
+}
+
+async function loadTrips() {
+
+    const container = document.getElementById("tripsContainer");
+    container.innerHTML = "";
+
+    let trips;
+    try {
+        trips = (await TravelPalAuth.request("GET", "/trips")).trips;
+    } catch (error) {
+        say(error.message, "error");
+        return;
+    }
+
+    if (trips.length === 0) {
+        const empty = el("div", "panel meta", "You have not saved any trips yet. ");
+        const link = el("a", "", "Plan your first trip");
+        link.href = "index.html#planner";
+        empty.appendChild(link);
+        container.appendChild(empty);
+        return;
+    }
+
+    trips.forEach(trip => {
+
+        const plan = trip.plan || {};
+        const card = el("div", "panel");
+
+        const head = el("div", "d-flex justify-content-between align-items-start gap-3");
+        const left = el("div");
+        left.appendChild(el("h5", "fw-bold mb-1", trip.title));
+        left.appendChild(el("div", "meta",
+            trip.duration_days + " days · budget " + rupees(trip.budget) +
+            " per person" + (plan.startCity ? " · from " + plan.startCity : "") +
+            " · saved " + String(trip.created_at).slice(0, 10)));
+        head.appendChild(left);
+
+        const remove = el("button", "btn-small", "Delete");
+        remove.type = "button";
+        remove.addEventListener("click", () => removeTrip(trip.id));
+        head.appendChild(remove);
+        card.appendChild(head);
+
+        if (plan.interests && plan.interests.length > 0) {
+            card.appendChild(el("div", "meta mt-2", "Interests: " + plan.interests.join(", ")));
+        }
+
+        if (plan.spots && plan.spots.length > 0) {
+            card.appendChild(el("div", "mt-2",
+                "Spots: " + plan.spots.map(spot => spot.name).join(", ")));
+        }
+
+        if (plan.days && plan.days.length > 0) {
+            const details = el("details", "mt-3");
+            details.appendChild(el("summary", "", "View day-by-day itinerary"));
+            details.appendChild(renderDays(plan.days));
+            if (plan.tripFees !== undefined) {
+                details.appendChild(el("div", "meta mt-2",
+                    "Entrance fees for the whole trip: " + rupees(plan.tripFees) +
+                    " per person. Fees and visit times are estimates."));
+            }
+            card.appendChild(details);
+        }
+
+        container.appendChild(card);
+    });
+}
+
+/* ---------- favourites ---------- */
+
+async function removeFavourite(id) {
+    try {
+        await TravelPalAuth.request("DELETE", "/favourites/" + id);
+        loadFavourites();
+    } catch (error) {
+        say(error.message, "error");
+    }
+}
+
+async function loadFavourites() {
+
+    const container = document.getElementById("favouritesContainer");
+    container.innerHTML = "";
+
+    let items;
+    try {
+        items = (await TravelPalAuth.request("GET", "/favourites")).favourites;
+    } catch (error) {
+        say(error.message, "error");
+        return;
+    }
+
+    if (items.length === 0) {
+        const column = el("div", "col-12");
+        column.appendChild(el("div", "panel meta",
+            "No favourite places yet. Use the heart button on a result card."));
+        container.appendChild(column);
+        return;
+    }
+
+    items.forEach(item => {
+
+        const column = el("div", "col-md-6 col-lg-4");
+        const card = el("div", "panel h-100 mb-0");
+
+        card.appendChild(el("div", "meta",
+            [item.city, item.state].filter(Boolean).join(", ")));
+        card.appendChild(el("h5", "fw-bold mt-1", item.place_name));
+
+        const facts = [];
+        if (item.place_type) { facts.push(item.place_type); }
+        if (item.avg_rating !== null && item.avg_rating !== undefined) {
+            facts.push(Number(item.avg_rating).toFixed(1) + "★");
+        }
+        if (item.entrance_fee_inr !== null && item.entrance_fee_inr !== undefined) {
+            facts.push(rupees(item.entrance_fee_inr));
+        }
+        card.appendChild(el("div", "meta", facts.join(" · ")));
+
+        const row = el("div", "d-flex gap-2 mt-3");
+        const map = el("a", "btn-main", "View on map");
+        map.href = "https://www.google.com/maps/search/?api=1&query=" +
+            encodeURIComponent([item.place_name, item.city, item.state].filter(Boolean).join(" "));
+        map.target = "_blank";
+        map.rel = "noopener";
+        const remove = el("button", "btn-small", "Remove");
+        remove.type = "button";
+        remove.addEventListener("click", () => removeFavourite(item.id));
+        row.appendChild(map);
+        row.appendChild(remove);
+        card.appendChild(row);
+
+        column.appendChild(card);
+        container.appendChild(column);
+    });
+}
+
+if (TravelPalAuth.requireLogin()) {
+    fillProfile();
+    loadTrips();
+    loadFavourites();
+}
+
+</script>
+</body>
+</html>

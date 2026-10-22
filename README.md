@@ -1,4 +1,4 @@
-# Travel Pal
+# Vishwaara
 
 An MLOps-based smart travel recommendation system for India. You give it a budget, trip length and interests (for example "Temple"), and it returns the best-matching places from a database of about 9,000 destinations (9,003 after cleaning).
 
