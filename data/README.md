@@ -36,7 +36,7 @@ description, tags, best_time, latitude, longitude, address`
 
 ### How to get the files
 
-Both files are attached to the [data-v1 release](https://github.com/ashutoshdeolankar/travel-pal/releases/tag/data-v1) of this repository.
+Both files are attached to the [data-v1 release](https://github.com/ashutoshdeolankar/vishwaara/releases/tag/data-v1) of this repository.
 
 Option A (browser): open the release page, download both files, and copy them into `data/raw/`.
 
@@ -44,8 +44,8 @@ Option B (PowerShell, from the project root):
 
 ```powershell
 mkdir data\raw -Force
-Invoke-WebRequest https://github.com/ashutoshdeolankar/travel-pal/releases/download/data-v1/travelpal_india_combined_v2.csv -OutFile data\raw\travelpal_india_combined_v2.csv
-Invoke-WebRequest https://github.com/ashutoshdeolankar/travel-pal/releases/download/data-v1/india_airbnb_listings.csv -OutFile data\raw\india_airbnb_listings.csv
+Invoke-WebRequest https://github.com/ashutoshdeolankar/vishwaara/releases/download/data-v1/travelpal_india_combined_v2.csv -OutFile data\raw\travelpal_india_combined_v2.csv
+Invoke-WebRequest https://github.com/ashutoshdeolankar/vishwaara/releases/download/data-v1/india_airbnb_listings.csv -OutFile data\raw\india_airbnb_listings.csv
 ```
 
 The file names must stay exactly as shown.
